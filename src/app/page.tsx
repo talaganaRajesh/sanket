@@ -7,7 +7,6 @@ import VideoUpload from '@/components/VideoUpload';
 import AudioPlayer from '@/components/AudioPlayer';
 
 export default function Home() {
-  const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
   const [audioData, setAudioData] = useState<{
     audioUrl: string;
     transcription: string;
@@ -15,7 +14,6 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleVideoUpload = async (videoFile: File) => {
-    setUploadedVideo(videoFile);
     setIsProcessing(true);
 
     try {

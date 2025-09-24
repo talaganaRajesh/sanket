@@ -13,7 +13,6 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<'upload' | 'record'>('upload');
   const [isRecording, setIsRecording] = useState(false);
-  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -116,7 +115,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
     }
   };
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
@@ -126,7 +125,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
     }
     setIsRecording(false);
     setMediaRecorder(null);
-  };
+  }, [stream]);
 
   const startRecording = useCallback(() => {
     if (!stream) return;
@@ -163,7 +162,6 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
         setUploadedVideo(file);
         
         // Clean up recording state
-        setRecordedChunks([]);
         setIsRecording(false);
         setMediaRecorder(null);
         
@@ -175,14 +173,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
       };
       
       setMediaRecorder(recorder);
-      setRecordedChunks(chunks);
       recorder.start(1000); // Record in 1 second chunks
       setIsRecording(true);
     } catch (error) {
       console.error('Error starting recording:', error);
       alert('Could not start recording. Please try again.');
     }
-  }, [stream, onVideoUploaded]);
+  }, [stream, onVideoUploaded, stopCamera]);
 
   const stopRecording = () => {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
@@ -406,7 +403,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                           </svg>
                         </div>
-                        <p className="text-zinc-400 text-sm">Click "Start Camera" to begin</p>
+                        <p className="text-zinc-400 text-sm">Click &quot;Start Camera&quot; to begin</p>
                       </div>
                     </div>
                   )}

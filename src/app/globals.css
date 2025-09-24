@@ -61,6 +61,11 @@ body {
   background-color: #f0fdf4;
 }
 
+/* Video recording mirror effect */
+.mirror {
+  transform: scaleX(-1);
+}
+
 /* Custom slider styles for audio player */
 .slider::-webkit-slider-thumb {
   appearance: none;

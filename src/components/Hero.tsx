@@ -15,14 +15,20 @@ const Hero = () => {
           {/* Text Content */}
           <div className="order-2 lg:order-1 text-center lg:text-left">
             <h1 className="text-4xl lg:text-5xl font-bold text-black leading-tight">
-              Translate <br />
+              Recognize <br />
               <span className="text-emerald-500">Sign Language</span>{' '}
-              for Everyone
+              Instantly
             </h1>
             
             <p className="mt-6 text-lg lg:text-xl text-zinc-600 leading-relaxed">
-              Transform sign language videos into clear English audio using our AI-powered platform.
+              Upload or capture a photo of sign language gestures and get instant AI-powered character recognition.
             </p>
+            
+            <div className="mt-4 inline-block bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+              <p className="text-sm text-blue-800 font-medium">
+                🎬 Video feature coming soon!
+              </p>
+            </div>
             
             <div className="mt-8">
               <button 
@@ -41,7 +47,7 @@ const Hero = () => {
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-zinc-700 font-medium">Real-time Processing</span>
+                <span className="text-zinc-700 font-medium">Instant Recognition</span>
               </div>
               
               <div className="flex items-center justify-center lg:justify-start space-x-3">
@@ -50,7 +56,7 @@ const Hero = () => {
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-zinc-700 font-medium">High Accuracy</span>
+                <span className="text-zinc-700 font-medium">36 Characters (0-9, a-z)</span>
               </div>
             </div>
           </div>

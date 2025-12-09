@@ -1,22 +1,24 @@
-# sanket - AI-Powered Sign Language to Audio Converter
+# Sanket - AI-Powered Sign Language Recognition
 
-A modern, responsive Next.js application that converts sign language videos into English audio using AI technology. This is a front-end prototype built for demonstration purposes with a simulated backend.
+A modern, responsive Next.js application that recognizes sign language gestures from photos using AI technology. Upload or capture images to get instant character recognition powered by a trained TensorFlow.js model.
 
-![sanket Demo](https://via.placeholder.com/800x400/10B981/FFFFFF?text=sanket+Demo)
+![Sanket Demo](https://via.placeholder.com/800x400/10B981/FFFFFF?text=Sanket+Demo)
 
 ## 🚀 Features
 
 - **Modern UI/UX**: Clean, minimal design with professional typography
 - **Responsive Design**: Mobile-first approach, works perfectly on all devices
-- **Video Upload**: Drag-and-drop or click to upload sign language videos
-- **Real-time Processing**: Simulated AI processing with loading indicators
-- **Audio Playback**: Custom audio player with waveform animation
-- **Transcription Display**: Shows converted text alongside audio
-- **Dummy Backend**: Simulated API responses for demonstration
+- **Image Upload**: Drag-and-drop or click to upload sign language photos
+- **Camera Support**: Capture photos directly from your camera
+- **AI Recognition**: Real-time character detection using TensorFlow.js
+- **36 Characters**: Supports digits (0-9) and letters (a-z)
+- **Confidence Scores**: Shows prediction confidence for transparency
+- **Client-side Processing**: Privacy-focused - all AI runs in your browser
 
 ## 🛠 Tech Stack
 
 - **Framework**: Next.js 15 (App Router)
+- **AI/ML**: TensorFlow.js
 - **Styling**: Tailwind CSS v4
 - **Language**: TypeScript
 - **Fonts**: Inter (Google Fonts)
@@ -39,18 +41,22 @@ src/
 ├── app/
 │   ├── api/
 │   │   └── upload/
-│   │       └── route.ts          # Dummy API endpoint
+│   │       └── route.ts          # Image upload API
 │   ├── globals.css               # Global styles & animations
 │   ├── layout.tsx                # Root layout
 │   └── page.tsx                  # Main homepage
 ├── components/
 │   ├── Navbar.tsx                # Navigation component
-│   ├── Hero.tsx                  # Hero section with demo video
-│   ├── VideoUpload.tsx           # Upload interface
-│   └── AudioPlayer.tsx           # Audio playback with waveform
+│   ├── Hero.tsx                  # Hero section
+│   ├── ImageUpload.tsx           # Upload & camera interface
+│   ├── ResultDisplay.tsx         # Prediction results display
+│   └── AudioPlayer.tsx           # (Legacy - for future video feature)
+├── utils/
+│   └── modelUtils.ts             # TensorFlow.js model utilities
 public/
-├── videos/                       # Demo videos (add your own)
-└── audio/                        # Sample audio files (add your own)
+├── tfjs_model/                   # Converted TensorFlow.js model
+│   ├── model.json                # Model architecture
+│   └── group1-shard*.bin         # Model weights
 ```
 
 ## 🚦 Getting Started
@@ -59,6 +65,8 @@ public/
 
 - Node.js 18+ 
 - npm or yarn
+- Python 3.7+ (for model conversion)
+- TensorFlow and TensorFlowJS converter
 
 ### Installation
 
@@ -68,9 +76,21 @@ public/
    npm install
    ```
 
-2. **Add media files** (see [MEDIA_SETUP.md](MEDIA_SETUP.md)):
-   - Add demo video: `public/videos/demo-sign-language.mp4`
-   - Add sample audio: `public/audio/sample-output.mp3`
+2. **Convert your model** (IMPORTANT):
+   
+   Your `model.h5` file needs to be converted to TensorFlow.js format:
+   
+   ```bash
+   # Install Python dependencies
+   pip install tensorflowjs tensorflow
+   
+   # Run the conversion script
+   python convert_model.py
+   ```
+   
+   This will create `public/tfjs_model/` with the converted model files.
+   
+   See [MODEL_CONVERSION.md](MODEL_CONVERSION.md) for detailed instructions.
 
 3. **Start development server**:
    ```bash
@@ -82,32 +102,48 @@ public/
 ## 🎯 Core Components
 
 ### Navbar
-- Clean logo design with "sanket" branding
+- Clean logo design with "Sanket" branding
 - Login button with hover effects
 - Fully responsive navigation
 
 ### Hero Section
-- Left: Autoplay demo video showing sign language
-- Right: Compelling copy about AI conversion
+- Compelling copy about AI sign language recognition
 - Call-to-action buttons
 - Feature highlights with checkmarks
+- Coming soon notice for video feature
 
-### Video Upload
+### Image Upload
+- Dual mode: Upload or Camera
 - Drag-and-drop interface
-- File type validation (video files only)
-- Upload progress indicator
-- Video preview before processing
+- File type validation (image files only)
+- Camera capture with real-time preview
+- Image preview before processing
 
-### Audio Player
-- Custom-designed player with waveform animation
-- Play/pause controls
-- Progress tracking and seeking
-- Download functionality
-- Transcription display
+### Result Display
+- Large, clear prediction display
+- Confidence score with visual progress bar
+- Side-by-side image and result view
+- Copy result functionality
+- Try another image button
 
 ## 🔧 API Endpoints
 
 ### POST /api/upload
+
+Handles image uploads and returns image data for client-side processing.
+
+**Request**: FormData with `image` file
+
+**Response**:
+```json
+{
+  "success": true,
+  "imageData": "data:image/jpeg;base64,...",
+  "message": "Image received, ready for processing"
+}
+```
+
+### GET /api/upload
 Simulates video processing and returns dummy audio data.
 
 **Response**:

@@ -1,40 +1,54 @@
 import { NextResponse } from 'next/server';
 
-export async function POST() {
-  try {
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Dummy response data
-    const response = {
-      success: true,
-      audioUrl: '/audio/sample_audio.mp3', // Updated to match your audio file
-      transcription: 'Wellcome to sanket, please upload your video to translate sign language',
-      processingTime: '2.3 seconds',
-      confidence: 0.95,
-      message: 'Sign language successfully converted to audio'
-    };
+// Classes mapping
+const CLASSES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
-    return NextResponse.json(response);
-  } catch {
+export async function POST(request: Request) {
+  try {
+    const formData = await request.formData();
+    const imageFile = formData.get('image') as File;
+
+    if (!imageFile) {
+      return NextResponse.json(
+        { success: false, error: 'No image provided' },
+        { status: 400 }
+      );
+    }
+
+    // Convert file to base64 for client-side processing
+    const bytes = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64Image = buffer.toString('base64');
+
+    // Return the image data to be processed on client side
+    // The actual ML prediction will happen in the browser using TensorFlow.js
+    return NextResponse.json({
+      success: true,
+      imageData: `data:${imageFile.type};base64,${base64Image}`,
+      message: 'Image received, ready for processing',
+    });
+
+  } catch (error) {
+    console.error('Upload error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to process video',
-        message: 'An error occurred while converting your sign language video'
+      {
+        success: false,
+        error: 'Failed to process image',
+        message: error instanceof Error ? error.message : 'An error occurred while uploading your image',
       },
       { status: 500 }
     );
   }
 }
 
-// Handle GET requests (optional)
+// Handle GET requests
 export async function GET() {
   return NextResponse.json({
-    message: 'Sign Language to Audio API',
-    version: '1.0.0',
+    message: 'Sign Language Image Recognition API',
+    version: '2.0.0',
+    supportedClasses: CLASSES,
     endpoints: {
-      upload: 'POST /api/upload - Upload sign language video for conversion'
-    }
+      upload: 'POST /api/upload - Upload sign language image for prediction',
+    },
   });
 }

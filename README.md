@@ -1,202 +1,158 @@
-# Sanket - AI-Powered Sign Language Recognition
+# 🤟 Sanket - Sign Language Recognition
 
-A modern, responsive Next.js application that recognizes sign language gestures from photos using AI technology. Upload or capture images to get instant character recognition powered by a trained TensorFlow.js model.
+An AI-powered web application that recognizes American Sign Language (ASL) characters from images in real-time. Upload or capture photos to get instant character recognition powered by a trained TensorFlow.js model.
 
-![Sanket Demo](https://via.placeholder.com/800x400/10B981/FFFFFF?text=Sanket+Demo)
+## ✨ Features
 
-## 🚀 Features
+- 📸 **Image Upload & Camera Capture** - Upload images or take photos directly
+- 🤖 **AI-Powered Recognition** - Deep learning model with MobileNetV2 architecture  
+- 🔤 **36 Characters** - Recognizes 0-9 and a-z
+- ⚡ **Real-time Predictions** - Instant results with confidence scores
+- 🎨 **Modern UI** - Clean, responsive design with Tailwind CSS
+- 🔒 **Privacy-First** - All AI processing happens in your browser
 
-- **Modern UI/UX**: Clean, minimal design with professional typography
-- **Responsive Design**: Mobile-first approach, works perfectly on all devices
-- **Image Upload**: Drag-and-drop or click to upload sign language photos
-- **Camera Support**: Capture photos directly from your camera
-- **AI Recognition**: Real-time character detection using TensorFlow.js
-- **36 Characters**: Supports digits (0-9) and letters (a-z)
-- **Confidence Scores**: Shows prediction confidence for transparency
-- **Client-side Processing**: Privacy-focused - all AI runs in your browser
+## 🚀 Quick Start
 
-## 🛠 Tech Stack
+### Prerequisites
 
-- **Framework**: Next.js 15 (App Router)
-- **AI/ML**: TensorFlow.js
-- **Styling**: Tailwind CSS v4
+- Node.js 18+
+- npm or yarn
+
+### Installation & Running
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Start the development server:
+```bash
+npm run dev
+```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## 🎯 How to Use
+
+1. **Upload an Image** - Click "Choose Image" or drag & drop a photo of sign language gesture
+2. **Or Use Camera** - Switch to "Camera" tab and click a photo directly
+3. **Get Results** - View the predicted character with confidence score
+
+## 🧠 Model Details
+
+- **Architecture**: MobileNetV2 with custom classification head
+- **Input Size**: 128x128x3 RGB images
+- **Output**: 36 classes (0-9, a-z)
+- **Framework**: TensorFlow.js (browser-based inference)
+- **Model Files**: Located in `public/tfjs_model/`
+  - `model.json` - Model architecture
+  - `group1-shard*.bin` - Model weights (3 files)
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 15.5.7 (App Router with Turbopack)
+- **UI**: React 19.1.0, Tailwind CSS v4
+- **AI**: TensorFlow.js 4.22.0
 - **Language**: TypeScript
 - **Fonts**: Inter (Google Fonts)
-- **Icons**: Heroicons (embedded SVG)
-
-## 🎨 Design System
-
-- **Colors**: 
-  - Primary: White (#FFFFFF) & Black (#000000)
-  - Accent: Emerald (#10B981)
-  - Grays: Zinc color palette
-- **Typography**: Inter font family for modern, readable text
-- **Components**: Modular, reusable React components
-- **Animations**: Smooth transitions and micro-interactions
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/
-│   ├── api/
-│   │   └── upload/
-│   │       └── route.ts          # Image upload API
-│   ├── globals.css               # Global styles & animations
-│   ├── layout.tsx                # Root layout
-│   └── page.tsx                  # Main homepage
-├── components/
-│   ├── Navbar.tsx                # Navigation component
-│   ├── Hero.tsx                  # Hero section
-│   ├── ImageUpload.tsx           # Upload & camera interface
-│   ├── ResultDisplay.tsx         # Prediction results display
-│   └── AudioPlayer.tsx           # (Legacy - for future video feature)
-├── utils/
-│   └── modelUtils.ts             # TensorFlow.js model utilities
-public/
-├── tfjs_model/                   # Converted TensorFlow.js model
-│   ├── model.json                # Model architecture
-│   └── group1-shard*.bin         # Model weights
+sanket/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx              # Main application page
+│   │   ├── layout.tsx            # Root layout
+│   │   └── globals.css           # Global styles
+│   ├── components/
+│   │   ├── Navbar.tsx            # Navigation bar
+│   │   ├── Hero.tsx              # Hero section
+│   │   ├── ImageUpload.tsx       # Image upload & camera
+│   │   └── ResultDisplay.tsx     # Prediction results
+│   └── utils/
+│       └── modelUtils.ts         # TensorFlow.js model handling
+├── public/
+│   └── tfjs_model/              # TensorFlow.js model files
+│       ├── model.json
+│       ├── group1-shard1of3.bin
+│       ├── group1-shard2of3.bin
+│       └── group1-shard3of3.bin
+├── package.json
+├── next.config.ts
+└── README.md
 ```
 
-## 🚦 Getting Started
+## 📝 Available Scripts
 
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- Python 3.7+ (for model conversion)
-- TensorFlow and TensorFlowJS converter
-
-### Installation
-
-1. **Clone and install dependencies**:
-   ```bash
-   cd your-project-directory
-   npm install
-   ```
-
-2. **Convert your model** (IMPORTANT):
-   
-   Your `model.h5` file needs to be converted to TensorFlow.js format:
-   
-   ```bash
-   # Install Python dependencies
-   pip install tensorflowjs tensorflow
-   
-   # Run the conversion script
-   python convert_model.py
-   ```
-   
-   This will create `public/tfjs_model/` with the converted model files.
-   
-   See [MODEL_CONVERSION.md](MODEL_CONVERSION.md) for detailed instructions.
-
-3. **Start development server**:
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**: Navigate to `http://localhost:3000`
-
-## 🎯 Core Components
-
-### Navbar
-- Clean logo design with "Sanket" branding
-- Login button with hover effects
-- Fully responsive navigation
-
-### Hero Section
-- Compelling copy about AI sign language recognition
-- Call-to-action buttons
-- Feature highlights with checkmarks
-- Coming soon notice for video feature
-
-### Image Upload
-- Dual mode: Upload or Camera
-- Drag-and-drop interface
-- File type validation (image files only)
-- Camera capture with real-time preview
-- Image preview before processing
-
-### Result Display
-- Large, clear prediction display
-- Confidence score with visual progress bar
-- Side-by-side image and result view
-- Copy result functionality
-- Try another image button
-
-## 🔧 API Endpoints
-
-### POST /api/upload
-
-Handles image uploads and returns image data for client-side processing.
-
-**Request**: FormData with `image` file
-
-**Response**:
-```json
-{
-  "success": true,
-  "imageData": "data:image/jpeg;base64,...",
-  "message": "Image received, ready for processing"
-}
+```bash
+npm run dev      # Start development server (with Turbopack)
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
 ```
 
-### GET /api/upload
-Simulates video processing and returns dummy audio data.
+## 🎨 Color Palette
 
-**Response**:
-```json
-{
-  "success": true,
-  "audioUrl": "/audio/sample-output.mp3",
-  "transcription": "Sample transcription text...",
-  "processingTime": "2.3 seconds",
-  "confidence": 0.95
-}
+- **Primary**: Emerald (#10B981)
+- **Secondary**: Zinc (#3F3F46)
+- **Background**: White (#FFFFFF)
+- **Accent**: Blue (#3B82F6)
+- **Text**: Black (#000000)
+
+## 🔧 Model Configuration
+
+The model configuration is handled in `src/utils/modelUtils.ts`:
+- **Image Preprocessing**: Resize to 128x128, normalize to [0, 1]
+- **Model Loading**: From `/tfjs_model/model.json`
+- **Prediction**: Softmax output with confidence scores
+- **Classes**: 36-character array mapping indices to labels
+
+## 📊 Performance
+
+- **Inference Time**: ~100-300ms per image (browser-dependent)
+- **Model Size**: ~14MB (compressed)
+- **Supported Browsers**: Chrome, Firefox, Safari, Edge (latest versions)
+- **Mobile Support**: ✅ iOS Safari, Chrome Android
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Deploy automatically
+
+### Other Platforms
+
+Build the production version:
+```bash
+npm run build
+npm run start
 ```
 
-## 🎨 Customization
+## 🤝 Contributing
 
-### Colors
-Update colors in `src/app/globals.css`:
-```css
-:root {
-  --accent: #10B981; /* Change accent color */
-  --background: #ffffff;
-  --foreground: #000000;
-}
-```
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Typography
-Modify fonts in `src/app/layout.tsx`:
-```tsx
-import { Inter } from "next/font/google";
-// Change to your preferred Google Font
-```
+## 📄 License
 
-### Branding
-Update logo and branding in `src/components/Navbar.tsx`:
-```tsx
-<div className="text-2xl font-bold text-black">
-  Your<span className="text-emerald-500">Brand</span>
-</div>
-```
+This project is licensed under the MIT License.
 
-## 📱 Mobile Responsiveness
+## 🙏 Acknowledgments
 
-- **Mobile-first approach**: Designed for mobile, enhanced for desktop
-- **Breakpoints**: Uses Tailwind's responsive utilities (sm, md, lg, xl)
-- **Touch-friendly**: Large tap targets and intuitive gestures
-- **Optimized layouts**: Stacked layouts on mobile, side-by-side on desktop
+- TensorFlow.js team for the ML framework
+- MobileNetV2 architecture
+- Next.js and React teams
 
-## ⚡ Performance Features
+---
 
-- **Next.js optimization**: Automatic code splitting and optimization
-- **Image optimization**: Next.js Image component for optimized loading
-- **Lazy loading**: Components load when needed
-- **Minimal JavaScript**: Efficient bundle size with tree shaking
+**Made with ❤️ for breaking communication barriers**
 
 ## 🔮 Future Backend Integration
 

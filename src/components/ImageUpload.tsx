@@ -12,12 +12,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUploaded, isProcessing
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'upload' | 'camera'>('upload');
-  const [isCameraActive, setIsCameraActive] = useState(false);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -67,67 +63,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUploaded, isProcessing
     fileInputRef.current?.click();
   };
 
-  // Camera Functions
-  const startCamera = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          width: { ideal: 1280 }, 
-          height: { ideal: 720 },
-          facingMode: 'user'
-        }
-      });
-      
-      setStream(mediaStream);
-      setIsCameraActive(true);
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
-      }
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      alert('Unable to access camera. Please make sure you have granted camera permissions.');
-    }
-  };
-
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
-      setIsCameraActive(false);
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-    }
-  };
-
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
-      
-      if (context) {
-        // Set canvas size to match video
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        // Draw the current video frame to canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Convert canvas to blob and create file
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
-            handleFile(file);
-            stopCamera();
-          }
-        }, 'image/jpeg', 0.95);
-      }
-    }
-  };
-
   const resetUpload = () => {
     setUploadedImage(null);
     setImagePreviewUrl(null);
@@ -158,7 +93,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUploaded, isProcessing
             <button
               onClick={() => {
                 setActiveTab('upload');
-                stopCamera();
               }}
               className={`px-6 py-2 rounded-md font-medium transition-all ${
                 activeTab === 'upload'
@@ -275,75 +209,68 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUploaded, isProcessing
           </div>
         )}
 
-        {/* Camera Tab */}
+        {/* Camera Tab - Coming Soon */}
         {activeTab === 'camera' && (
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-zinc-200">
-            {!isCameraActive ? (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-10 h-10 text-emerald-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-black mb-2">
-                  Take a Photo
-                </h3>
-                <p className="text-zinc-500 mb-6">
-                  Use your camera to capture a sign language gesture
-                </p>
-                <button
-                  onClick={startCamera}
-                  disabled={isProcessing}
-                  className="bg-emerald-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            <div className="text-center py-12">
+              <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg
+                  className="w-12 h-12 text-emerald-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  Start Camera
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div className="relative mb-6 bg-black rounded-lg overflow-hidden">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full"
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
                   />
-                </div>
-                <div className="flex justify-center gap-4">
-                  <button
-                    onClick={capturePhoto}
-                    disabled={isProcessing}
-                    className="bg-emerald-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    📸 Capture Photo
-                  </button>
-                  <button
-                    onClick={stopCamera}
-                    className="bg-zinc-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500 transition-all"
-                  >
-                    Cancel
-                  </button>
-                </div>
-                <canvas ref={canvasRef} className="hidden" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
               </div>
-            )}
+              <div className="inline-block bg-amber-100 text-amber-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
+                🚀 Coming Soon
+              </div>
+              <h3 className="text-2xl font-bold text-black mb-3">
+                Live Camera Capture
+              </h3>
+              <p className="text-zinc-600 mb-6 max-w-md mx-auto">
+                We&apos;re working on real-time camera capture for instant sign language detection. 
+                This feature will be available in the next update!
+              </p>
+              <div className="bg-zinc-50 rounded-xl p-6 max-w-sm mx-auto">
+                <h4 className="font-semibold text-black mb-3">What&apos;s coming:</h4>
+                <ul className="text-left text-zinc-600 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Real-time camera preview
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    One-click photo capture
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Front & back camera support
+                  </li>
+                </ul>
+              </div>
+              <p className="text-sm text-zinc-500 mt-6">
+                For now, please use the <button onClick={() => setActiveTab('upload')} className="text-emerald-600 font-medium hover:underline">Upload Photo</button> feature
+              </p>
+            </div>
           </div>
         )}
       </div>

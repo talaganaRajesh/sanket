@@ -21,14 +21,8 @@ const Hero = () => {
             </h1>
             
             <p className="mt-6 text-lg lg:text-xl text-zinc-600 leading-relaxed">
-              Upload or capture a photo of sign language gestures and get instant AI-powered character recognition.
+              Upload or capture a photo of sign language gestures and get instant AI-powered character recognition for letters and numbers.
             </p>
-            
-            <div className="mt-4 inline-block bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
-              <p className="text-sm text-blue-800 font-medium">
-                🎬 Video feature coming soon!
-              </p>
-            </div>
             
             <div className="mt-8">
               <button 

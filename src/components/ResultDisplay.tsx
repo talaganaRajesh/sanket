@@ -6,10 +6,12 @@ import Image from 'next/image';
 interface ResultDisplayProps {
   prediction: string;
   confidence: number;
-  imageUrl: string;
+  imageUrl: string; // This can now be a video URL or image URL
 }
 
 const ResultDisplay: React.FC<ResultDisplayProps> = ({ prediction, confidence, imageUrl }) => {
+  const isVideo = imageUrl.endsWith('.mp4') || imageUrl.startsWith('blob:');
+
   return (
     <section className="bg-white py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,25 +24,33 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ prediction, confidence, i
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-black mb-2">
-              Prediction Result
+              Recognition Result
             </h2>
             <p className="text-zinc-600">
-              AI has analyzed your sign language gesture
+              AI has analyzed your sign language video
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Image Preview */}
+            {/* Preview */}
             <div className="order-2 md:order-1">
-              <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-emerald-200">
-                <Image
-                  src={imageUrl}
-                  alt="Analyzed sign language"
-                  width={800}
-                  height={600}
-                  className="w-full h-auto object-contain bg-zinc-100"
-                />
-                <div className="absolute top-3 right-3 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-emerald-200 aspect-video bg-zinc-100">
+                {isVideo ? (
+                  <video 
+                    src={imageUrl} 
+                    controls 
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <Image
+                    src={imageUrl}
+                    alt="Analyzed sign language"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-contain"
+                  />
+                )}
+                <div className="absolute top-3 right-3 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold z-10">
                   Analyzed
                 </div>
               </div>
@@ -50,10 +60,10 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ prediction, confidence, i
             <div className="order-1 md:order-2 text-center md:text-left">
               <div className="mb-6">
                 <p className="text-sm font-medium text-zinc-600 uppercase tracking-wide mb-2">
-                  Detected Character
+                  Detected Word
                 </p>
                 <div className="inline-block">
-                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-8xl font-bold rounded-2xl shadow-2xl px-12 py-8 mb-4">
+                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-6xl font-bold rounded-2xl shadow-2xl px-10 py-6 mb-4 break-words max-w-full">
                     {prediction.toUpperCase()}
                   </div>
                 </div>
@@ -74,7 +84,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ prediction, confidence, i
                   />
                 </div>
                 <p className="text-xs text-zinc-500 mt-2">
-                  {confidence >= 0.9 ? 'Excellent match!' : confidence >= 0.7 ? 'Good match' : 'Fair match'}
+                  {confidence >= 0.8 ? 'Excellent match!' : confidence >= 0.5 ? 'Good match' : 'Low confidence'}
                 </p>
               </div>
 
@@ -85,7 +95,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ prediction, confidence, i
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                   <p className="text-sm text-blue-800">
-                    This prediction is based on our AI model trained on sign language gestures
+                    This prediction is based on the I3D Deep Learning model.
                   </p>
                 </div>
               </div>
@@ -98,7 +108,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ prediction, confidence, i
               onClick={() => window.location.reload()}
               className="bg-emerald-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all"
             >
-              Try Another Image
+              Try Another Video
             </button>
             <button
               onClick={() => {

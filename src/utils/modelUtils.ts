@@ -9,12 +9,11 @@ const CLASSES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c'
 // =====================================================
 const USE_DEMO_MODE = false;
 
-const MODEL_JSON_PATH = '/tfjs_model/model.json';
-const IMAGE_SIZE = 128;
+// Model metadata can be added here if needed in the future
 
-let model: tf.LayersModel | null = null;
-let modelLoadPromise: Promise<tf.LayersModel | null> | null = null;
-let demoModelLoaded = false;
+
+const model: tf.LayersModel | null = null;
+const demoModelLoaded = false;
 let currentFileName = '';
 
 let loadingStatus: {
@@ -55,76 +54,16 @@ export function setCurrentFileName(fileName: string) {
 }
 
 // Realistic demo loading - looks like real AI model loading
-async function loadDemoMode(): Promise<null> {
-  if (demoModelLoaded) return null;
-  
-  console.log('🧠 Initializing MobileNetV2 Sign Language Model...');
-  
-  // Stage 1: Initialize TensorFlow.js
-  updateProgress('init', 5, 'Initializing TensorFlow.js...');
-  await new Promise(r => setTimeout(r, 400));
-  
-  updateProgress('init', 12, 'Setting up WebGL backend...');
-  await new Promise(r => setTimeout(r, 350));
-  
-  // Stage 2: Download model
-  updateProgress('download', 18, 'Downloading model architecture...');
-  await new Promise(r => setTimeout(r, 500));
-  
-  updateProgress('download', 28, 'Loading weight shard 1/3 (4.2MB)...');
-  await new Promise(r => setTimeout(r, 450));
-  
-  updateProgress('download', 42, 'Loading weight shard 2/3 (4.1MB)...');
-  await new Promise(r => setTimeout(r, 400));
-  
-  updateProgress('download', 58, 'Loading weight shard 3/3 (3.8MB)...');
-  await new Promise(r => setTimeout(r, 450));
-  
-  // Stage 3: Parse model
-  updateProgress('parse', 68, 'Parsing model structure (159 layers)...');
-  await new Promise(r => setTimeout(r, 400));
-  
-  updateProgress('parse', 78, 'Building neural network graph...');
-  await new Promise(r => setTimeout(r, 350));
-  
-  // Stage 4: Optimize
-  updateProgress('optimize', 85, 'Compiling WebGL shaders...');
-  await new Promise(r => setTimeout(r, 300));
-  
-  updateProgress('optimize', 92, 'Optimizing for your GPU...');
-  await new Promise(r => setTimeout(r, 250));
-  
-  // Stage 5: Warmup
-  updateProgress('warmup', 96, 'Running warmup inference...');
-  await new Promise(r => setTimeout(r, 300));
-  
-  updateProgress('complete', 100, 'AI Model Ready! (MobileNetV2 - 36 classes)');
-  console.log('✅ Model loaded successfully!');
-  console.log('📊 Input shape: [null, 128, 128, 3]');
-  console.log('📊 Output shape: [null, 36]');
-  console.log('📊 Total parameters: 2,422,820');
-  
-  demoModelLoaded = true;
-  return null;
-}
+// loadDemoMode was here and was unused
+
 
 // Extract prediction from filename
-function getPredictionFromFileName(fileName: string): string | null {
-  if (!fileName) return null;
-  
-  // Get the first character of the filename (lowercase)
-  const firstChar = fileName.charAt(0).toLowerCase();
-  
-  // Check if it's a valid class (0-9 or a-z)
-  if (CLASSES.includes(firstChar)) {
-    return firstChar;
-  }
-  
-  return null;
-}
+// getPredictionFromFileName was here and was unused
+
 
 // Demo prediction - uses filename but looks realistic
-async function predictDemo(imageElement: HTMLImageElement): Promise<{ prediction: string; confidence: number }> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function predictDemo(_imageElement: HTMLImageElement): Promise<{ prediction: string; confidence: number }> {
   console.log('🔍 Preprocessing image...');
   
   // Simulate preprocessing time
@@ -225,7 +164,8 @@ export async function checkBackendHealth(): Promise<boolean> {
     const response = await fetch(`${API_URL}/health`);
     const data = await response.json();
     return data.status === 'ok';
-  } catch (e) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_e) {
     return false;
   }
 }

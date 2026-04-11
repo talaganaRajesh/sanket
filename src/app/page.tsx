@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import VideoUpload from '@/components/VideoUpload';
 import ResultDisplay from '@/components/ResultDisplay';
-import { predictVideo, loadModel, onModelLoadProgress, isModelLoaded } from '@/utils/modelUtils';
+import { predictVideo, loadModel, onModelLoadProgress } from '@/utils/modelUtils';
 
 export default function Home() {
   const [predictionData, setPredictionData] = useState<{

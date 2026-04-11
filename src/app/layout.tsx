@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -7,9 +7,14 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Sanket - Convert Sign Language to Audio",
-  description: "AI-powered platform that converts sign language videos into English audio, helping bridge communication gaps.",
+  title: "Sanket - Premium Sign Language AI",
+  description: "Advanced AI platform that converts sign language gestures into high-fidelity neural outputs.",
 };
 
 export default function RootLayout({
@@ -20,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} antialiased font-sans`}
+        className={`${inter.variable} ${outfit.variable} bg-white antialiased`}
       >
         {children}
       </body>

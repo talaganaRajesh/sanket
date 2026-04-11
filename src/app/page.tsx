@@ -85,31 +85,24 @@ export default function Home() {
       // Create video URL for preview
       const videoUrl = URL.createObjectURL(videoFile);
 
-      // Define simulation steps with random duration ranges (min, max in ms)
+      // Define simulation workflow
       const simulationWorkflow = [
         { msg: 'Initializing hardware hooks...', min: 300, max: 700 },
         { msg: 'Allocating GPU compute buffers...', min: 400, max: 800 },
         { msg: 'Detecting hand landmarks...', min: 1200, max: 4000 },
-        { msg: 'Normalizing spatial coordinates...', min: 300, max: 800 },
-        { msg: 'Temporal pooling (Frame 1-15)...', min: 600, max: 1200 },
-        { msg: 'Temporal pooling (Frame 16-30)...', min: 600, max: 1200 },
-        { msg: 'Running I3D feature extraction...', min: 1500, max: 4500 },
-        { msg: 'Cross-referencing neural weights...', min: 800, max: 2000 },
-        { msg: 'Applying Softmax distribution...', min: 300, max: 600 },
-        { msg: 'Finalizing recognition result...', min: 400, max: 900 }
+        { msg: 'Temporal pooling active...', min: 800, max: 2000 },
+        { msg: 'Running I3D extraction...', min: 1500, max: 3500 },
+        { msg: 'Finalizing result...', min: 400, max: 900 }
       ];
 
-      // Run through the workflow with random delays
       for (const step of simulationWorkflow) {
         setProcessingMessage(step.msg);
         const delay = Math.floor(Math.random() * (step.max - step.min + 1) + step.min);
         await new Promise(r => setTimeout(r, delay));
       }
 
-      // Run prediction (this will be fast since it's mock, but it provides the data)
       const result = await predictVideo(videoFile);
 
-      // Set prediction data
       setPredictionData({
         prediction: result.prediction,
         confidence: result.confidence,
@@ -119,118 +112,114 @@ export default function Home() {
 
     } catch (error) {
       console.error('Error processing video:', error);
-      setError(error instanceof Error ? error.message : 'Failed to process video. Please make sure the AI Core is running.');
+      setError(error instanceof Error ? error.message : 'Failed to process video.');
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* ... (keep existing model loading and status banners) ... */}
-      
-      {/* Model Ready Toast */}
-      {modelReady && modelStatus.stage === 'complete' && (
-        <div className="fixed top-24 right-4 z-50 bg-emerald-500 text-white px-5 py-3 rounded-2xl shadow-[0_8px_30px_rgb(16,185,129,0.3)] flex items-center gap-3 backdrop-blur-md border border-white/20 animate-in fade-in slide-in-from-right-8 duration-500">
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <p className="font-semibold tracking-wide flex flex-col">
-            <span>AI Backend Connected!</span>
-            <span className="text-[10px] opacity-70 uppercase tracking-widest font-black">Link State: Stable</span>
-          </p>
-        </div>
-      )}
+    <main className="min-h-screen bg-white transition-colors duration-1000">
       
       <Navbar />
       <Hero />
       
-      {/* Show upload section only when model is ready */}
-      {modelReady ? (
-        <VideoUpload onVideoUploaded={handleVideoUpload} />
-      ) : (
-        <section className="bg-zinc-50 py-16">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="bg-white rounded-3xl p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-zinc-100 backdrop-blur-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600"></div>
-              <div className="w-24 h-24 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-8 rotate-3 shadow-inner">
-                <div className="animate-spin rounded-full h-12 w-12 border-[3px] border-emerald-500 border-t-transparent"></div>
-              </div>
-              <h3 className="text-3xl font-bold text-black mb-4 tracking-tighter">
-                {modelStatus.stage === 'parse' ? '⚙️ Initializing Neural Core' : 'Establishing Vision Buffer'}
-              </h3>
-              <p className="text-zinc-500 text-lg mb-8 max-w-md mx-auto leading-relaxed">
-                {modelStatus.stage === 'parse' 
-                  ? 'Compiling 159 spatio-temporal layers for browser-side inference. This only happens on first boot.'
-                  : 'Preparing optimized weights for real-time sign language conversion...'}
-              </p>
-              <div className="max-w-sm mx-auto">
-                <div className="flex justify-between text-xs font-black text-zinc-400 mb-3 uppercase tracking-widest">
-                  <span>{modelStatus.stage === 'parse' ? 'COMPILING LAYERS' : 'FETCHING WEIGHTS'}</span>
-                  <span className="text-emerald-500">{modelStatus.progress.toFixed(0)}%</span>
+      {/* Initializing Neural Core Section */}
+      {!modelReady && (
+        <section className="relative py-32 overflow-hidden bg-zinc-50/50">
+          <div className="absolute inset-0 grid-bg opacity-40"></div>
+          <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center relative z-10">
+            <div className="glass rounded-[3rem] p-16 md:p-24 border border-black/5 overflow-hidden group">
+              <div className="relative z-10">
+                <div className="w-32 h-32 bg-black/5 rounded-[2.5rem] flex items-center justify-center mx-auto mb-12 border border-black/5 animate-float shadow-sm">
+                  <div className="animate-spin rounded-full h-16 w-16 border-2 border-black border-t-transparent opacity-80"></div>
                 </div>
-                <div className="bg-zinc-100 rounded-full h-4 p-1 shadow-inner relative overflow-hidden">
-                  <div 
-                    className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                    style={{ width: `${modelStatus.progress}%` }}
-                  ></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 animate-shimmer"></div>
-                </div>
-                <p className="text-[10px] font-black text-zinc-400 mt-4 uppercase tracking-[0.2em]">
-                  Status: {modelStatus.message}
+                
+                <h3 className="text-4xl md:text-5xl font-outfit font-black text-black mb-6 uppercase italic tracking-tighter">
+                  {modelStatus.stage === 'parse' ? 'Compiling <span className="text-zinc-400">Neural</span>' : 'Fetching <span className="text-zinc-400">Weights</span>'}
+                </h3>
+                
+                <p className="text-zinc-500 text-lg mb-12 max-w-md mx-auto font-medium lowercase italic leading-relaxed">
+                  {modelStatus.stage === 'parse' 
+                    ? 'Optimizing spatiotemporal kernels for high-fidelity inference.'
+                    : 'Awaiting neural parameter injection...'}
                 </p>
+                
+                <div className="max-w-sm mx-auto">
+                  <div className="flex justify-between text-[10px] font-black text-zinc-400 mb-4 uppercase tracking-[0.4em]">
+                    <span>Synchronization Status</span>
+                    <span className="text-black italic">{modelStatus.progress.toFixed(0)}%</span>
+                  </div>
+                  <div className="bg-black/5 rounded-full h-2.5 p-0.5 border border-black/5 relative overflow-hidden backdrop-blur-sm">
+                    <div 
+                      className="bg-black h-full rounded-full transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
+                      style={{ width: `${modelStatus.progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-[9px] font-black text-zinc-400 mt-6 uppercase tracking-[0.3em] italic">
+                    Protocol: {modelStatus.message}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
       )}
+
+      {/* Main Feature Entry: Only show when model is ready and NOT processing/showing results */}
+      {modelReady && !isProcessing && !predictionData && (
+        <VideoUpload onVideoUploaded={handleVideoUpload} />
+      )}
       
       {/* Processing Indicator */}
       {isProcessing && (
-        <section className="bg-zinc-50 py-16">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="bg-white rounded-[3rem] p-16 md:p-24 shadow-[0_40px_100px_rgba(0,0,0,0.06)] border border-zinc-100 relative overflow-hidden">
-              <div className="absolute -top-20 -right-20 w-80 h-80 bg-emerald-50 rounded-full opacity-30 blur-3xl"></div>
-              <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-emerald-50 rounded-full opacity-30 blur-3xl"></div>
+        <section className="relative py-32 overflow-hidden bg-white">
+          <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
+          <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center relative z-10">
+            <div className="glass rounded-[4rem] p-20 md:p-32 border border-black/5 relative overflow-hidden">
+              {/* Technical HUD Overlay (Light) */}
+              <div className="absolute top-10 left-10 w-24 h-24 border-t border-l border-black/10 rounded-tl-3xl"></div>
+              <div className="absolute top-10 right-10 w-24 h-24 border-t border-r border-black/10 rounded-tr-3xl"></div>
+              <div className="absolute bottom-10 left-10 w-24 h-24 border-b border-l border-black/10 rounded-bl-3xl"></div>
+              <div className="absolute bottom-10 right-10 w-24 h-24 border-b border-r border-black/10 rounded-br-3xl"></div>
               
               <div className="relative z-10">
-                <div className="flex justify-center items-end gap-1.5 mb-14 h-24">
-                  {[...Array(12)].map((_, i) => (
+                <div className="flex justify-center items-end gap-2 mb-20 h-32">
+                  {[...Array(16)].map((_, i) => (
                     <div 
                       key={i} 
-                      className="w-2.5 bg-emerald-500 rounded-full animate-waveform shadow-[0_5px_15px_rgba(16,185,129,0.3)]" 
+                      className="w-2.5 bg-black rounded-full animate-waveform shadow-sm" 
                       style={{ 
-                        height: `${Math.random() * 60 + 20}%`,
-                        animationDelay: `${i * 0.1}s`,
-                        animationDuration: `${0.8 + Math.random()}s`
+                        height: `${Math.random() * 80 + 20}%`,
+                        animationDelay: `${i * 0.08}s`,
+                        animationDuration: `${0.6 + Math.random()}s`
                       }}
                     ></div>
                   ))}
                 </div>
                 
-                <h3 className="text-4xl md:text-6xl font-black text-black mb-6 tracking-tighter uppercase italic">
+                <h3 className="text-5xl md:text-7xl font-outfit font-black text-black mb-8 tracking-tighter uppercase italic">
                   {processingMessage}
                 </h3>
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <span className="w-12 h-[2px] bg-zinc-200"></span>
-                  <p className="text-zinc-400 text-sm font-black uppercase tracking-[0.4em]">Deep Analysis Active</p>
-                  <span className="w-12 h-[2px] bg-zinc-200"></span>
+                
+                <div className="flex items-center justify-center gap-6 mb-12">
+                  <span className="w-16 h-px bg-black/10"></span>
+                  <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.5em] italic">Extraction Active</p>
+                  <span className="w-16 h-px bg-black/10"></span>
                 </div>
                 
-                <div className="mt-16 max-w-md mx-auto">
-                  <div className="bg-zinc-100 rounded-full h-3 relative overflow-hidden p-0.5">
-                    <div className="absolute inset-y-0.5 left-0.5 bg-emerald-500 w-1/4 rounded-full animate-loading-slide shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                <div className="mt-16 max-w-lg mx-auto">
+                  <div className="bg-black/5 rounded-full h-3 relative overflow-hidden border border-black/5 backdrop-blur-sm">
+                    <div className="absolute inset-y-0.5 left-0.5 bg-black w-1/3 rounded-full animate-loading-slide"></div>
                   </div>
-                  <div className="flex justify-between mt-6">
+                  <div className="flex justify-between mt-10">
                     <div className="text-left">
-                      <p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Inference Core</p>
-                      <p className="text-xs font-bold text-black mt-1">Sanket-I3D-V2</p>
+                      <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] italic">Algorithm Engine</p>
+                      <p className="text-sm font-outfit font-bold text-black mt-2 uppercase">Sanket-I3D</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Compute Load</p>
-                      <p className="text-xs font-bold text-black mt-1">84% GPU [VRAM 2.1GB]</p>
+                      <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] italic">Buffer State</p>
+                      <p className="text-sm font-outfit font-bold text-black mt-2 uppercase">Sync Complete</p>
                     </div>
                   </div>
                 </div>
@@ -242,20 +231,28 @@ export default function Home() {
 
       {/* Error Display */}
       {error && !isProcessing && (
-        <section className="bg-zinc-50 py-16">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="bg-white rounded-2xl p-12 shadow-lg border border-red-200">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+        <section className="relative py-32 overflow-hidden bg-white">
+          <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center relative z-10">
+            <div className="glass rounded-[3rem] p-16 md:p-24 border border-red-500/10 overflow-hidden group">
+              <div className="relative z-10">
+                <div className="w-20 h-20 bg-red-50 text-red-500 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-10 shadow-sm">
+                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <h3 className="text-4xl font-outfit font-black text-black mb-6 uppercase italic tracking-tighter">
+                  System <span className="text-red-500/50">Bypass</span>
+                </h3>
+                <p className="text-zinc-500 text-lg max-w-md mx-auto font-medium lowercase italic leading-relaxed">
+                  {error}
+                </p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="mt-12 px-10 py-4 bg-black text-white rounded-full font-black uppercase text-[10px] tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
+                >
+                  Force Hard Reset
+                </button>
               </div>
-              <h3 className="text-2xl font-semibold text-black mb-4">
-                Error
-              </h3>
-              <p className="text-zinc-600 text-lg">
-                {error}
-              </p>
             </div>
           </div>
         </section>
@@ -271,41 +268,50 @@ export default function Home() {
       )}
 
       {/* Footer */}
-      <footer className="bg-zinc-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <div className="text-2xl font-bold mb-4">
-                <span className="text-emerald-500">Sanket</span>
+      <footer className="relative py-24 overflow-hidden bg-white border-t border-black/5">
+        <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="w-5 h-5 bg-white rounded-sm rotate-45"></div>
+                </div>
+                <span className="text-3xl font-outfit font-black text-black italic tracking-tighter uppercase">Sanket</span>
               </div>
-              <p className="text-zinc-400">
-                Breaking communication barriers with AI-powered sign language recognition.
+              <p className="text-zinc-500 text-sm leading-relaxed max-w-sm font-medium">
+                Pioneering high-fidelity spatiotemporal sign recognition via advanced neural architectures.
               </p>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Features</h3>
-              <ul className="space-y-2 text-zinc-400">
-                <li>Real-time prediction</li>
-                <li>High accuracy AI</li>
-                <li>36 Characters (0-9, a-z)</li>
-                <li>Camera support</li>
+              <h3 className="text-[10px] font-black text-black uppercase tracking-[0.4em] mb-10 italic">Core</h3>
+              <ul className="space-y-4 text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                <li className="hover:text-black transition-colors cursor-pointer">Neural Link</li>
+                <li className="hover:text-black transition-colors cursor-pointer">Optical Feed</li>
+                <li className="hover:text-black transition-colors cursor-pointer">Vector API</li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-zinc-400">
-                <li>Help Center</li>
-                <li>Contact Us</li>
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
+              <h3 className="text-[10px] font-black text-black uppercase tracking-[0.4em] mb-10 italic">Docs</h3>
+              <ul className="space-y-4 text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                <li className="hover:text-black transition-colors cursor-pointer">Whitepaper</li>
+                <li className="hover:text-black transition-colors cursor-pointer">Security</li>
+                <li className="hover:text-black transition-colors cursor-pointer">Support</li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-zinc-800 mt-8 pt-8 text-center text-zinc-400">
-            <p>&copy; 2025 Sanket. All rights reserved.</p>
+          <div className="border-t border-black/5 mt-20 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+             <div className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.3em] italic">
+                © SANKET-SYSTEMS 2026 / ALL SEQUENCES RESERVED
+             </div>
+             <div className="flex gap-1.5">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="w-1.5 h-1.5 bg-black/5 rounded-full"></div>
+                ))}
+             </div>
           </div>
         </div>
       </footer>

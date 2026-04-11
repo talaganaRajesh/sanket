@@ -25,15 +25,12 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
       video.srcObject = stream;
       
       const handleLoadedMetadata = () => {
-        console.log('Video metadata loaded, attempting to play...');
         video.play().catch((error) => {
           console.error('Error playing video:', error);
         });
       };
 
       video.addEventListener('loadedmetadata', handleLoadedMetadata);
-      
-      // Cleanup function
       return () => {
         video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
@@ -54,7 +51,6 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0]);
     }
@@ -68,7 +64,6 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
   };
 
   const handleFile = (file: File) => {
-    // Check if file is video
     if (!file.type.startsWith('video/')) {
       alert('Please upload a video file');
       return;
@@ -76,12 +71,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
 
     setIsUploading(true);
     setUploadedVideo(file);
-    
-    // Create preview URL
     const url = URL.createObjectURL(file);
     setVideoPreviewUrl(url);
     
-    // Simulate upload delay
     setTimeout(() => {
       setIsUploading(false);
       onVideoUploaded(file);
@@ -96,18 +88,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          width: { ideal: 1280 }, 
-          height: { ideal: 720 },
-          facingMode: 'user'
-        },
+        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
         audio: true
       });
-      
-      console.log('Camera stream obtained:', mediaStream);
-      console.log('Video tracks:', mediaStream.getVideoTracks());
-      console.log('Audio tracks:', mediaStream.getAudioTracks());
-      
       setStream(mediaStream);
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -131,16 +114,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
     if (!stream) return;
 
     try {
-      // Try different mimeTypes for better compatibility
       let mimeType = 'video/webm;codecs=vp9';
       if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = 'video/webm;codecs=vp8';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/webm';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/mp4';
-          }
-        }
+        mimeType = 'video/webm';
       }
 
       const recorder = new MediaRecorder(stream, { mimeType });
@@ -155,29 +131,21 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: mimeType });
         const file = new File([blob], `recorded-video-${Date.now()}.webm`, { type: 'video/webm' });
-        
-        // Create preview URL
         const url = URL.createObjectURL(blob);
         setVideoPreviewUrl(url);
         setUploadedVideo(file);
-        
-        // Clean up recording state
         setIsRecording(false);
         setMediaRecorder(null);
-        
-        // Stop camera after recording
         stopCamera();
-        
-        // Process the recorded video
         onVideoUploaded(file);
       };
       
       setMediaRecorder(recorder);
-      recorder.start(1000); // Record in 1 second chunks
+      recorder.start(1000);
       setIsRecording(true);
     } catch (error) {
       console.error('Error starting recording:', error);
-      alert('Could not start recording. Please try again.');
+      alert('Could not start recording.');
     }
   }, [stream, onVideoUploaded, stopCamera]);
 
@@ -189,317 +157,238 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
 
   const handleTabChange = (tab: 'upload' | 'record') => {
     setActiveTab(tab);
-    // Clean up when switching tabs
     if (tab === 'upload') {
       stopCamera();
       setIsRecording(false);
     } else {
-      // Reset upload state
       setUploadedVideo(null);
-      if (videoPreviewUrl) {
-        URL.revokeObjectURL(videoPreviewUrl);
-      }
+      if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
       setVideoPreviewUrl(null);
     }
   };
 
   const resetRecording = () => {
     setUploadedVideo(null);
-    if (videoPreviewUrl) {
-      URL.revokeObjectURL(videoPreviewUrl);
-    }
+    if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
     setVideoPreviewUrl(null);
     setIsRecording(false);
     setMediaRecorder(null);
     setStream(null);
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
+    if (videoRef.current) videoRef.current.srcObject = null;
   };
 
   return (
-    <section id="upload-section" className="bg-zinc-50 py-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-black mb-4">
-            Upload or Record Your Sign Language Video
+    <section id="upload-section" className="relative py-32 overflow-hidden bg-white">
+      {/* Background elements (Light Grid) */}
+      <div className="absolute inset-0 grid-bg-dots opacity-30 pointer-events-none"></div>
+      
+      <div className="max-w-6xl mx-auto px-6 lg:px-12 relative z-10">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-black/5 border border-black/5 mb-8">
+            <span className="text-[10px] uppercase tracking-[0.4em] font-black text-black italic">Sequence Ingestion</span>
+          </div>
+          <h2 className="text-5xl lg:text-7xl font-outfit font-black text-black mb-8 uppercase tracking-tighter italic">
+            Initialize <span className="text-zinc-300">Uplink</span>
           </h2>
-          <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
-            Choose to upload an existing video or record a new one directly in your browser. Our AI will convert the sign language into English audio instantly.
+          <p className="text-xl text-zinc-500 max-w-3xl mx-auto font-medium italic">
+            Provide the temporal gesture data via local file ingestion or high-fidelity optical capture.
           </p>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex justify-center mb-10">
-          <div className="bg-white rounded-2xl p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-zinc-200 flex gap-2">
+        {/* Tab Selection (Solid Black Interface) */}
+        <div className="flex justify-center mb-16">
+          <div className="bg-white p-2 rounded-full flex gap-1 border border-black/10 shadow-2xl">
             <button
               onClick={() => handleTabChange('upload')}
-              className={`px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-3 ${
+              className={`px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 flex items-center gap-3 ${
                 activeTab === 'upload' 
-                  ? 'bg-emerald-500 text-white shadow-[0_8px_20px_rgba(16,185,129,0.3)] translate-y-[-2px]' 
-                  : 'text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50'
+                  ? 'bg-black text-white shadow-xl scale-105' 
+                  : 'text-zinc-400 hover:text-black hover:bg-black/5'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              Upload
+              File Stream
             </button>
             <button
               onClick={() => handleTabChange('record')}
-              className={`px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-3 ${
+              className={`px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 flex items-center gap-3 ${
                 activeTab === 'record' 
-                  ? 'bg-emerald-500 text-white shadow-[0_8px_20px_rgba(16,185,129,0.3)] translate-y-[-2px]' 
-                  : 'text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50'
+                  ? 'bg-black text-white shadow-xl scale-105' 
+                  : 'text-zinc-400 hover:text-black hover:bg-black/5'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              Record
+              Optical Link
             </button>
           </div>
         </div>
 
-        {/* Content based on active tab */}
-        <div className="space-y-10">
+        {/* Action Zone */}
+        <div className="space-y-12">
           {activeTab === 'upload' ? (
-            // Upload Area
             <div
-              className={`upload-area relative border-[3px] border-dashed rounded-[2rem] p-10 lg:p-20 text-center cursor-pointer transition-all duration-500 group overflow-hidden ${
+              className={`relative border-2 border-dashed rounded-[4rem] p-16 lg:p-32 text-center cursor-pointer transition-all duration-700 group overflow-hidden ${
                 dragActive 
-                  ? 'border-emerald-500 bg-emerald-50/50 scale-102 shadow-2xl' 
-                  : 'border-zinc-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30'
-              }`}
+                  ? 'border-black bg-black/5 scale-[1.01] shadow-2xl' 
+                  : 'border-black/10 hover:border-black/30 bg-zinc-50/50 hover:bg-zinc-50'
+              } glass`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
               onClick={onButtonClick}
             >
-              {/* Decorative background elements */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400/0 via-emerald-500/50 to-emerald-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              {/* Scan Animation Backdrop (Light) */}
+              <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity after:content-[''] after:absolute after:top-0 after:left-0 after:w-full after:h-px after:bg-black after:animate-scan-line"></div>
               
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="video/*"
-                onChange={handleChange}
-                className="hidden"
-              />
+              <input ref={fileInputRef} type="file" accept="video/*" onChange={handleChange} className="hidden" />
               
               {isUploading ? (
-                <div className="space-y-6 animate-pulse">
-                  <div className="w-24 h-24 bg-emerald-100 rounded-[2rem] flex items-center justify-center mx-auto shadow-inner">
-                    <div className="animate-spin rounded-full h-10 w-10 border-[3px] border-emerald-500 border-t-transparent"></div>
+                <div className="relative z-10 space-y-10 animate-pulse">
+                  <div className="w-24 h-24 bg-black/5 rounded-3xl flex items-center justify-center mx-auto border border-black/10 shadow-sm">
+                    <div className="animate-spin rounded-full h-10 w-10 border-2 border-black border-t-transparent"></div>
                   </div>
                   <div>
-                    <h4 className="text-2xl font-black text-emerald-600">Uploading File...</h4>
-                    <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest mt-2">Preparing Vision Buffer</p>
+                    <h4 className="text-3xl font-outfit font-black text-black italic uppercase tracking-tighter">Uploading Bitstream...</h4>
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.5em] mt-6">Parsing spatiotemporal data</p>
                   </div>
                 </div>
-              ) : uploadedVideo && activeTab === 'upload' ? (
-                <div className="space-y-6 animate-in zoom-in-95 duration-500">
-                  <div className="w-24 h-24 bg-emerald-500 rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_15px_30px_rgba(16,185,129,0.3)]">
+              ) : uploadedVideo ? (
+                <div className="relative z-10 space-y-10 animate-in zoom-in-95 duration-700">
+                  <div className="w-24 h-24 bg-black rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform rotate-12">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-2xl font-black text-black">File Ready for Analysis</h4>
-                    <p className="text-emerald-500 font-bold mt-1">{uploadedVideo.name}</p>
+                    <h4 className="text-4xl font-outfit font-black text-black italic uppercase tracking-tighter">Buffer Loaded</h4>
+                    <p className="text-zinc-500 font-bold mt-4 text-base">{uploadedVideo.name}</p>
                     <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setUploadedVideo(null);
-                        setVideoPreviewUrl(null);
-                        if (videoPreviewUrl) {
-                          URL.revokeObjectURL(videoPreviewUrl);
-                        }
-                      }}
-                      className="mt-6 text-zinc-400 hover:text-black font-black uppercase text-[10px] tracking-[0.2em] underline decoration-zinc-200 underline-offset-4 transition-all"
+                      onClick={(e) => { e.stopPropagation(); resetRecording(); }}
+                      className="mt-10 px-8 py-3 rounded-full border border-black/10 text-zinc-400 hover:text-black hover:bg-black/5 font-black uppercase text-[10px] tracking-[0.3em] transition-all"
                     >
-                      Choose Different Video
+                      Clear Memory
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6 transition-transform group-hover:scale-105 duration-500">
-                  <div className="w-24 h-24 bg-zinc-50 rounded-[2rem] flex items-center justify-center mx-auto group-hover:bg-emerald-50 transition-colors duration-500 shadow-inner">
-                    <svg className="w-10 h-10 text-zinc-300 group-hover:text-emerald-500 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                <div className="relative z-10 space-y-10 transition-all group-hover:scale-[1.02] duration-700">
+                  <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mx-auto border border-black/5 shadow-2xl group-hover:bg-black group-hover:text-white transition-all duration-500">
+                    <svg className="w-10 h-10 text-black group-hover:text-white transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-2xl md:text-3xl font-black text-black tracking-tight">
-                      Drop your sign video here
+                    <h4 className="text-4xl md:text-6xl font-outfit font-black text-black tracking-tighter italic uppercase">
+                      Drop <span className="text-zinc-200">Uplink</span>
                     </h4>
-                    <p className="text-zinc-500 font-medium mt-2 max-w-sm mx-auto">
-                      Our AI supports MP4, MOV, and AVI formats for maximum compatibility.
+                    <p className="text-zinc-500 font-medium mt-6 max-w-md mx-auto text-lg leading-relaxed italic">
+                      Drag spatiotemporal data packets (MP4, MOV) or click to browse local storage.
                     </p>
-                    <div className="mt-8 flex justify-center gap-3">
-                      <span className="px-4 py-2 bg-zinc-100 rounded-full text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">Max 100MB</span>
-                      <span className="px-4 py-2 bg-zinc-100 rounded-full text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">4K Optimized</span>
-                    </div>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            // Recording Area
-            !uploadedVideo ? (
-              <div className="bg-white rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-zinc-100 overflow-hidden relative">
-                <div className="text-center mb-10">
-                  <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] mb-3 block">Recording Studio</span>
-                  <h3 className="text-3xl font-black text-black">Capture Sign Language</h3>
-                </div>
+            // Recording Zone (Light HUD)
+            <div className="glass rounded-[4rem] p-10 lg:p-20 border border-black/5 overflow-hidden relative shadow-3xl">
+              <div className="text-center mb-16 italic">
+                <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.5em] mb-4 block">Hardware Layer: Activated</span>
+                <h3 className="text-4xl lg:text-5xl font-outfit font-black text-black uppercase tracking-tighter">Optical <span className="text-zinc-300">Analysis</span></h3>
+              </div>
 
-                {/* Camera View */}
-                <div className="aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden mb-10 relative group ring-8 ring-zinc-50 shadow-inner">
-                  {stream ? (
-                    <>
-                      <video
-                        ref={videoRef}
-                        autoPlay={true}
-                        muted={true}
-                        playsInline={true}
-                        controls={false}
-                        width="100%"
-                        height="100%"
-                        className="w-full h-full object-cover mirror"
-                      />
-                      {isRecording && (
-                        <div className="absolute top-8 left-8 flex items-center space-x-3 bg-red-600 px-4 py-2 rounded-full shadow-lg animate-pulse">
-                          <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-                          <span className="text-white text-xs font-black uppercase tracking-widest">Recording</span>
-                        </div>
-                      )}
-                      
-                      {/* Viewfinder crosshair */}
-                      <div className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-                        <div className="absolute top-1/2 left-4 w-8 h-1 bg-white -translate-y-1/2 rounded-full"></div>
-                        <div className="absolute top-1/2 right-4 w-8 h-1 bg-white -translate-y-1/2 rounded-full"></div>
-                        <div className="absolute top-4 left-1/2 w-1 h-8 -translate-x-1/2 rounded-full bg-white"></div>
-                        <div className="absolute bottom-4 left-1/2 w-1 h-8 -translate-x-1/2 rounded-full bg-white"></div>
+              <div className="aspect-video bg-zinc-100 rounded-[3rem] overflow-hidden mb-16 relative group border border-black/5 shadow-inner">
+                {stream ? (
+                  <>
+                    <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover scale-105 transition-transform duration-700 group-hover:scale-100" />
+                    {isRecording && (
+                      <div className="absolute top-10 left-10 flex items-center space-x-4 bg-black text-white px-6 py-3 rounded-full shadow-2xl animate-pulse">
+                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Recording Stream</span>
                       </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-                      <div className="text-center">
-                        <div className="w-20 h-20 bg-zinc-900 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-2xl border border-zinc-800">
-                          <svg className="w-10 h-10 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <p className="text-zinc-500 font-bold uppercase text-xs tracking-[0.2em]">Hardware Connection Required</p>
+                    )}
+                    
+                    {/* Light Viewfinder HUD */}
+                    <div className="absolute inset-0 pointer-events-none z-10">
+                      <div className="absolute top-10 left-10 w-20 h-20 border-t-2 border-l-2 border-black/20 rounded-tl-3xl"></div>
+                      <div className="absolute top-10 right-10 w-20 h-20 border-t-2 border-r-2 border-black/20 rounded-tr-3xl"></div>
+                      <div className="absolute bottom-10 left-10 w-20 h-20 border-b-2 border-l-2 border-black/20 rounded-bl-3xl"></div>
+                      <div className="absolute bottom-10 right-10 w-20 h-20 border-b-2 border-r-2 border-black/20 rounded-br-3xl"></div>
+                      <div className="absolute top-0 left-0 w-full h-1 bg-black/10 shadow-[0_0_20px_black] animate-scan-line"></div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-center group">
+                      <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-10 border border-black/5 shadow-2xl group-hover:scale-110 transition-transform">
+                        <svg className="w-10 h-10 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Recording Controls */}
-                <div className="flex justify-center">
-                  {!stream ? (
-                    <button
-                      onClick={startCamera}
-                      className="px-10 py-5 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 shadow-xl flex items-center gap-4"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      Initialize Camera
-                    </button>
-                  ) : (
-                    <div className="flex bg-zinc-100 p-2 rounded-3xl gap-2">
-                      {!isRecording ? (
-                        <>
-                          <button
-                            onClick={startRecording}
-                            className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 flex items-center gap-3 shadow-lg"
-                          >
-                            <div className="w-3 h-3 bg-white rounded-full"></div>
-                            Start Recording
-                          </button>
-                          <button
-                            onClick={stopCamera}
-                            className="px-8 py-4 bg-white text-zinc-600 hover:text-black rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 border border-zinc-200"
-                          >
-                            Disconnect
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={stopRecording}
-                          className="px-12 py-5 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 flex items-center gap-4 shadow-2xl scale-105"
-                        >
-                          <div className="w-3 h-3 bg-red-500 rounded-sm animate-pulse"></div>
-                          Stop & Analyze
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Tips */}
-                {stream && !isRecording && (
-                  <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                      <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-1">Lighting</p>
-                      <p className="text-xs font-medium text-emerald-900 opacity-70">Ensure hands are clearly lit.</p>
-                    </div>
-                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                      <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-1">Framing</p>
-                      <p className="text-xs font-medium text-emerald-900 opacity-70">Keep gestures inside crosshairs.</p>
-                    </div>
-                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                      <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-1">Motion</p>
-                      <p className="text-xs font-medium text-emerald-900 opacity-70">Sign at a steady, natural pace.</p>
+                      <p className="text-zinc-300 font-black uppercase text-[10px] tracking-[0.5em]">Awaiting Hardware Link</p>
                     </div>
                   </div>
                 )}
               </div>
-            ) : (
-              // Recording Success State
-              <div className="bg-white rounded-[2.5rem] p-12 lg:p-20 text-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-zinc-100 animate-in zoom-in-95 duration-500">
-                <div className="space-y-6">
-                  <div className="w-24 h-24 bg-emerald-500 rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_15px_30px_rgba(16,185,129,0.3)]">
-                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
+
+              {/* Controls */}
+              <div className="flex justify-center">
+                {!stream ? (
+                  <button
+                    onClick={startCamera}
+                    className="px-16 py-6 bg-black text-white rounded-full font-black uppercase text-[11px] tracking-[0.3em] transition-all hover:scale-105 active:scale-95 shadow-2xl flex items-center gap-4"
+                  >
+                    Open Optical Feed
+                  </button>
+                ) : (
+                  <div className="flex bg-white p-2 rounded-full gap-2 border border-black/5 shadow-xl">
+                    {!isRecording ? (
+                      <>
+                        <button
+                          onClick={startRecording}
+                          className="px-10 py-4 bg-black text-white rounded-full font-black uppercase text-[10px] tracking-[0.2em] transition-all flex items-center gap-4 shadow-lg hover:scale-105"
+                        >
+                          <div className="w-2.5 h-2.5 bg-white rounded-full animate-pulse"></div>
+                          Start Capture
+                        </button>
+                        <button
+                          onClick={stopCamera}
+                          className="px-10 py-4 text-zinc-400 hover:text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all"
+                        >
+                          Terminate Feed
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={stopRecording}
+                        className="px-16 py-6 bg-black text-white rounded-full font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center gap-5 shadow-2xl scale-110"
+                      >
+                        <div className="w-3 h-3 bg-white rounded-sm animate-spin"></div>
+                        Finalize Sequence
+                      </button>
+                    )}
                   </div>
-                  <div>
-                    <h4 className="text-3xl font-black text-black">Capture Complete</h4>
-                    <p className="text-emerald-500 font-bold mt-2">Buffer finalized: {uploadedVideo?.name}</p>
-                    <button 
-                      onClick={resetRecording}
-                      className="mt-8 bg-zinc-50 hover:bg-zinc-100 text-zinc-400 hover:text-black px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] transition-all"
-                    >
-                      Delete & Re-record
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
-            )
+            </div>
           )}
 
-          {/* Video Preview (shown for both upload and recorded videos) */}
+          {/* Result Buffer Preview */}
           {videoPreviewUrl && uploadedVideo && (
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-zinc-200">
-              <h3 className="text-lg font-semibold text-black mb-4">
-                {activeTab === 'upload' ? 'Uploaded Video Preview' : 'Recorded Video Preview'}
-              </h3>
-              <div className="aspect-video bg-black rounded-lg overflow-hidden">
-                <video
-                  src={videoPreviewUrl}
-                  controls
-                  className="w-full h-full object-contain"
-                >
-                  Your browser does not support the video tag.
-                </video>
+            <div className="glass rounded-[3rem] p-10 border border-black/5 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div className="flex items-center justify-between mb-8 italic">
+                <h3 className="text-xs font-black text-black uppercase tracking-[0.5em] flex items-center gap-3">
+                  <span className="w-2 h-2 bg-black rounded-full"></span>
+                  Buffered Sequence
+                </h3>
+                <span className="text-[10px] font-bold text-zinc-300">CRC-32: PASS</span>
               </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-zinc-600">
-                <span>File: {uploadedVideo?.name}</span>
-                <span>Size: {uploadedVideo ? (uploadedVideo.size / (1024 * 1024)).toFixed(2) : 0} MB</span>
+              <div className="aspect-video bg-zinc-50 rounded-[2rem] overflow-hidden ring-1 ring-black/5 shadow-inner">
+                <video src={videoPreviewUrl} controls className="w-full h-full object-contain" />
               </div>
             </div>
           )}

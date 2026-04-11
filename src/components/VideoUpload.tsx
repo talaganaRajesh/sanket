@@ -230,46 +230,46 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-xl p-1 shadow-sm border border-zinc-200">
+        <div className="flex justify-center mb-10">
+          <div className="bg-white rounded-2xl p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-zinc-200 flex gap-2">
             <button
               onClick={() => handleTabChange('upload')}
-              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-3 ${
                 activeTab === 'upload' 
-                  ? 'bg-emerald-500 text-white shadow-sm' 
-                  : 'text-zinc-600 hover:text-zinc-800'
+                  ? 'bg-emerald-500 text-white shadow-[0_8px_20px_rgba(16,185,129,0.3)] translate-y-[-2px]' 
+                  : 'text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50'
               }`}
             >
-              <svg className="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              Upload Video
+              Upload
             </button>
             <button
               onClick={() => handleTabChange('record')}
-              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-3 ${
                 activeTab === 'record' 
-                  ? 'bg-emerald-500 text-white shadow-sm' 
-                  : 'text-zinc-600 hover:text-zinc-800'
+                  ? 'bg-emerald-500 text-white shadow-[0_8px_20px_rgba(16,185,129,0.3)] translate-y-[-2px]' 
+                  : 'text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50'
               }`}
             >
-              <svg className="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              Record Video
+              Record
             </button>
           </div>
         </div>
 
         {/* Content based on active tab */}
-        <div className="space-y-8">
+        <div className="space-y-10">
           {activeTab === 'upload' ? (
             // Upload Area
             <div
-              className={`upload-area relative border-2 border-dashed rounded-xl p-8 lg:p-12 text-center cursor-pointer transition-all duration-300 ${
+              className={`upload-area relative border-[3px] border-dashed rounded-[2rem] p-10 lg:p-20 text-center cursor-pointer transition-all duration-500 group overflow-hidden ${
                 dragActive 
-                  ? 'border-emerald-500 bg-emerald-50' 
-                  : 'border-zinc-300 bg-white hover:border-emerald-400 hover:bg-emerald-50'
+                  ? 'border-emerald-500 bg-emerald-50/50 scale-102 shadow-2xl' 
+                  : 'border-zinc-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -277,6 +277,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
               onDrop={handleDrop}
               onClick={onButtonClick}
             >
+              {/* Decorative background elements */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400/0 via-emerald-500/50 to-emerald-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              
               <input
                 ref={fileInputRef}
                 type="file"
@@ -286,25 +289,25 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
               />
               
               {isUploading ? (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                <div className="space-y-6 animate-pulse">
+                  <div className="w-24 h-24 bg-emerald-100 rounded-[2rem] flex items-center justify-center mx-auto shadow-inner">
+                    <div className="animate-spin rounded-full h-10 w-10 border-[3px] border-emerald-500 border-t-transparent"></div>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-emerald-600">Uploading...</p>
-                    <p className="text-sm text-zinc-500">Processing your video</p>
+                    <h4 className="text-2xl font-black text-emerald-600">Uploading File...</h4>
+                    <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest mt-2">Preparing Vision Buffer</p>
                   </div>
                 </div>
               ) : uploadedVideo && activeTab === 'upload' ? (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <div className="space-y-6 animate-in zoom-in-95 duration-500">
+                  <div className="w-24 h-24 bg-emerald-500 rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_15px_30px_rgba(16,185,129,0.3)]">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-emerald-600">Video Uploaded Successfully!</p>
-                    <p className="text-sm text-zinc-500">{uploadedVideo.name}</p>
+                    <h4 className="text-2xl font-black text-black">File Ready for Analysis</h4>
+                    <p className="text-emerald-500 font-bold mt-1">{uploadedVideo.name}</p>
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -314,29 +317,30 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                           URL.revokeObjectURL(videoPreviewUrl);
                         }
                       }}
-                      className="mt-2 text-zinc-400 hover:text-zinc-600 text-sm underline"
+                      className="mt-6 text-zinc-400 hover:text-black font-black uppercase text-[10px] tracking-[0.2em] underline decoration-zinc-200 underline-offset-4 transition-all"
                     >
-                      Upload different video
+                      Choose Different Video
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto">
-                    <svg className="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="space-y-6 transition-transform group-hover:scale-105 duration-500">
+                  <div className="w-24 h-24 bg-zinc-50 rounded-[2rem] flex items-center justify-center mx-auto group-hover:bg-emerald-50 transition-colors duration-500 shadow-inner">
+                    <svg className="w-10 h-10 text-zinc-300 group-hover:text-emerald-500 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-zinc-700">
-                      Drag and drop your video here, or click to browse
+                    <h4 className="text-2xl md:text-3xl font-black text-black tracking-tight">
+                      Drop your sign video here
+                    </h4>
+                    <p className="text-zinc-500 font-medium mt-2 max-w-sm mx-auto">
+                      Our AI supports MP4, MOV, and AVI formats for maximum compatibility.
                     </p>
-                    <p className="text-sm text-zinc-500 mt-2">
-                      Supports MP4, MOV, AVI and other video formats
-                    </p>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      Maximum file size: 100MB
-                    </p>
+                    <div className="mt-8 flex justify-center gap-3">
+                      <span className="px-4 py-2 bg-zinc-100 rounded-full text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">Max 100MB</span>
+                      <span className="px-4 py-2 bg-zinc-100 rounded-full text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">4K Optimized</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -344,14 +348,14 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
           ) : (
             // Recording Area
             !uploadedVideo ? (
-              <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-zinc-200">
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-semibold text-zinc-800 mb-2">Record Your Sign Language</h3>
-                  <p className="text-zinc-600">Use your camera to record sign language directly</p>
+              <div className="bg-white rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-zinc-100 overflow-hidden relative">
+                <div className="text-center mb-10">
+                  <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] mb-3 block">Recording Studio</span>
+                  <h3 className="text-3xl font-black text-black">Capture Sign Language</h3>
                 </div>
 
                 {/* Camera View */}
-                <div className="aspect-video bg-zinc-900 rounded-lg overflow-hidden mb-6 relative">
+                <div className="aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden mb-10 relative group ring-8 ring-zinc-50 shadow-inner">
                   {stream ? (
                     <>
                       <video
@@ -363,133 +367,114 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                         width="100%"
                         height="100%"
                         className="w-full h-full object-cover mirror"
-                        style={{ backgroundColor: '#000' }}
-                        onCanPlay={() => {
-                          console.log('Video can play');
-                        }}
-                        onPlaying={() => {
-                          console.log('Video is playing');
-                        }}
-                        onWaiting={() => {
-                          console.log('Video is waiting');
-                        }}
-                        onError={(e) => {
-                          console.error('Video error:', e);
-                        }}
-                        onLoadStart={() => {
-                          console.log('Video load start');
-                        }}
-                        onLoadedData={() => {
-                          console.log('Video loaded data');
-                        }}
                       />
                       {isRecording && (
-                        <div className="absolute top-4 left-4 flex items-center space-x-2">
-                          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                          <span className="text-white text-sm font-medium">Recording...</span>
+                        <div className="absolute top-8 left-8 flex items-center space-x-3 bg-red-600 px-4 py-2 rounded-full shadow-lg animate-pulse">
+                          <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                          <span className="text-white text-xs font-black uppercase tracking-widest">Recording</span>
                         </div>
                       )}
-                      {/* Debug info overlay */}
-                      <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                        Stream: {stream ? 'Active' : 'None'}
-                        {stream && ` | Tracks: ${stream.getTracks().length}`}
+                      
+                      {/* Viewfinder crosshair */}
+                      <div className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                        <div className="absolute top-1/2 left-4 w-8 h-1 bg-white -translate-y-1/2 rounded-full"></div>
+                        <div className="absolute top-1/2 right-4 w-8 h-1 bg-white -translate-y-1/2 rounded-full"></div>
+                        <div className="absolute top-4 left-1/2 w-1 h-8 -translate-x-1/2 rounded-full bg-white"></div>
+                        <div className="absolute bottom-4 left-1/2 w-1 h-8 -translate-x-1/2 rounded-full bg-white"></div>
                       </div>
                     </>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-full h-full flex items-center justify-center bg-zinc-950">
                       <div className="text-center">
-                        <div className="w-16 h-16 bg-zinc-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-20 h-20 bg-zinc-900 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-2xl border border-zinc-800">
+                          <svg className="w-10 h-10 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                           </svg>
                         </div>
-                        <p className="text-zinc-400 text-sm">Click &quot;Start Camera&quot; to begin</p>
+                        <p className="text-zinc-500 font-bold uppercase text-xs tracking-[0.2em]">Hardware Connection Required</p>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Recording Controls */}
-                <div className="flex justify-center space-x-4">
+                <div className="flex justify-center">
                   {!stream ? (
                     <button
                       onClick={startCamera}
-                      className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                      className="px-10 py-5 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 shadow-xl flex items-center gap-4"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                       </svg>
-                      <span>Start Camera</span>
+                      Initialize Camera
                     </button>
                   ) : (
-                    <div className="flex space-x-4">
+                    <div className="flex bg-zinc-100 p-2 rounded-3xl gap-2">
                       {!isRecording ? (
                         <>
                           <button
                             onClick={startRecording}
-                            className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                            className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 flex items-center gap-3 shadow-lg"
                           >
                             <div className="w-3 h-3 bg-white rounded-full"></div>
-                            <span>Start Recording</span>
+                            Start Recording
                           </button>
                           <button
                             onClick={stopCamera}
-                            className="px-6 py-3 bg-zinc-500 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors duration-200"
+                            className="px-8 py-4 bg-white text-zinc-600 hover:text-black rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 border border-zinc-200"
                           >
-                            Stop Camera
+                            Disconnect
                           </button>
                         </>
                       ) : (
                         <button
                           onClick={stopRecording}
-                          className="px-6 py-3 bg-zinc-800 hover:bg-zinc-900 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                          className="px-12 py-5 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all duration-300 flex items-center gap-4 shadow-2xl scale-105"
                         >
-                          <div className="w-3 h-3 bg-white rounded-sm"></div>
-                          <span>Stop Recording</span>
+                          <div className="w-3 h-3 bg-red-500 rounded-sm animate-pulse"></div>
+                          Stop & Analyze
                         </button>
                       )}
                     </div>
                   )}
                 </div>
 
-                {/* Recording Instructions */}
+                {/* Tips */}
                 {stream && !isRecording && (
-                  <div className="mt-6 bg-blue-50 rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-blue-900 mb-1">Recording Tips</h4>
-                        <ul className="text-sm text-blue-800 space-y-1">
-                          <li>• Ensure good lighting on your hands and face</li>
-                          <li>• Keep your hands clearly visible in the camera frame</li>
-                          <li>• Sign at a natural pace for best accuracy</li>
-                        </ul>
-                      </div>
+                  <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                      <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-1">Lighting</p>
+                      <p className="text-xs font-medium text-emerald-900 opacity-70">Ensure hands are clearly lit.</p>
+                    </div>
+                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                      <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-1">Framing</p>
+                      <p className="text-xs font-medium text-emerald-900 opacity-70">Keep gestures inside crosshairs.</p>
+                    </div>
+                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                      <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-1">Motion</p>
+                      <p className="text-xs font-medium text-emerald-900 opacity-70">Sign at a steady, natural pace.</p>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
               // Recording Success State
-              <div className="bg-white rounded-xl p-8 lg:p-12 text-center shadow-sm border border-zinc-200">
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <div className="bg-white rounded-[2.5rem] p-12 lg:p-20 text-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-zinc-100 animate-in zoom-in-95 duration-500">
+                <div className="space-y-6">
+                  <div className="w-24 h-24 bg-emerald-500 rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_15px_30px_rgba(16,185,129,0.3)]">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-emerald-600">Video Recorded Successfully!</p>
-                    <p className="text-sm text-zinc-500">{uploadedVideo?.name}</p>
+                    <h4 className="text-3xl font-black text-black">Capture Complete</h4>
+                    <p className="text-emerald-500 font-bold mt-2">Buffer finalized: {uploadedVideo?.name}</p>
                     <button 
                       onClick={resetRecording}
-                      className="mt-2 text-zinc-400 hover:text-zinc-600 text-sm underline"
+                      className="mt-8 bg-zinc-50 hover:bg-zinc-100 text-zinc-400 hover:text-black px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] transition-all"
                     >
-                      Record another video
+                      Delete & Re-record
                     </button>
                   </div>
                 </div>

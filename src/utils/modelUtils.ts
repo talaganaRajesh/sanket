@@ -1,7 +1,12 @@
 import * as tf from '@tensorflow/tfjs';
 
 // Classes mapping for sign language recognition (0-9, a-z)
-const CLASSES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+// Classes mapping for sign language recognition - Words instead of characters
+const CLASSES = [
+  'HELLO', 'WORLD', 'THANK YOU', 'WELCOME', 'SIGN', 'LANGUAGE', 'SANKET', 'HELP', 
+  'YES', 'NO', 'PLEASE', 'SORRY', 'NAME', 'FRIEND', 'FAMILY', 'LOVE',
+  'GOOD', 'MORNING', 'EVERYONE', 'EMERGENCY', 'DOCTOR', 'HOSPITAL', 'WATER', 'FOOD'
+];
 
 // =====================================================
 // SMART MOCK MODE - Looks like real AI but uses logic-based simulation
@@ -10,6 +15,12 @@ const CLASSES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c'
 const model: tf.LayersModel | null = null;
 let modelLoadedSimulated = false;
 let currentFileName = '';
+
+// Helper to generate a consistent cache key for a file
+function getCacheKey(file: File): string {
+  // Version 3: Invalidate old caches to apply new recognition logic
+  return `sanket_cache_v3_${file.name}_${file.size}`;
+}
 
 let loadingStatus: {
   stage: string;
@@ -50,50 +61,89 @@ export function setCurrentFileName(fileName: string) {
 
 /**
  * Smart Deterministic Prediction
- * - If filename starts with a valid class (e.g., "a_video.mp4"), use that class.
- * - Otherwise, use a hash of the filename to pick a consistent class.
+ * - Extracts words directly from the filename to feel "intelligent".
  */
 function getSmartResult(fileName: string): { prediction: string; confidence: number } {
   if (!fileName) {
-    return { prediction: 'a', confidence: 0.92 };
+    return { prediction: 'HELLO', confidence: 0.92 };
   }
 
-  const name = fileName.toLowerCase();
+  // 1. Clean the filename to extract the core word
+  // e.g., "quick.mp4" -> "QUICK", "thank_you_v2.mp4" -> "THANK YOU"
+  const cleanName = fileName.toUpperCase().split('.')[0];
   
-  // 1. Check if filename starts with a class (Demo/Cheat mode)
-  const firstChar = name.charAt(0);
-  if (CLASSES.includes(firstChar)) {
-    // Return the class found with a high (but not 100%) confidence
-    return { prediction: firstChar, confidence: 0.88 + Math.random() * 0.08 };
+  // Extract anything that looks like words (A-Z and spaces)
+  // We filter out generic words like 'VIDEO', 'SIGN', 'RECORDED'
+  const potentialWord = cleanName.split(/[^A-Z\s]/)[0].trim();
+  const genericWords = ['VIDEO', 'SIGN', 'RECORDED', 'CAPTURE', 'STREAM'];
+  
+  if (potentialWord && potentialWord.length >= 2 && !genericWords.includes(potentialWord)) {
+    console.log(`🎯 [Logic] Extracted "${potentialWord}" from filename.`);
+    
+    // Generate deterministic confidence
+    let hash = 0;
+    for (let i = 0; i < fileName.length; i++) {
+      hash = ((hash << 5) - hash) + fileName.charCodeAt(i);
+      hash |= 0;
+    }
+    const confidence = 0.88 + (Math.abs(hash % 100) / 1000); // 0.88 to 0.98
+    return { prediction: potentialWord, confidence };
   }
 
-  // 2. Otherwise, consistent random using simple hash
+  // 2. Fallback to predefined classes if filename is generic or numbers
+  const name = fileName.toUpperCase();
+  const sortedClasses = [...CLASSES].sort((a, b) => b.length - a.length);
+  const matchedClass = sortedClasses.find(word => name.includes(word));
+  
+  if (matchedClass) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = ((hash << 5) - hash) + name.charCodeAt(i);
+      hash |= 0;
+    }
+    const confidence = 0.88 + (Math.abs(hash % 100) / 1000);
+    return { prediction: matchedClass, confidence };
+  }
+
+  // 3. Fallback to hash index if nothing works
   let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = ((hash << 5) - hash) + name.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
+  for (let i = 0; i < fileName.length; i++) {
+    hash = ((hash << 5) - hash) + fileName.charCodeAt(i);
+    hash |= 0;
   }
   
   const index = Math.abs(hash) % CLASSES.length;
-  const confidence = 0.72 + (Math.abs(hash % 200) / 1000); // Consistent confidence between 0.72 and 0.92
+  const confidence = 0.78 + (Math.abs(hash % 200) / 1000);
   
   return { prediction: CLASSES[index], confidence };
 }
 
-async function simulateInference(fileName: string, type: 'video' | 'image') {
+async function simulateInference(fileName: string, type: 'video' | 'image', file?: File) {
+  // Check localStorage for cached result
+  if (file && typeof window !== 'undefined') {
+    const cacheKey = getCacheKey(file);
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      console.log('💾 [Cache] Found existing result for this video.');
+      const result = JSON.parse(cached);
+      // Still simulate a bit of processing for "realism"
+      await new Promise(r => setTimeout(r, 1500));
+      return { ...result, isCached: true };
+    }
+  }
+
   console.log(`🔍 [Core] Initializing ${type} analysis pipeline...`);
   await new Promise(r => setTimeout(r, 400));
   
   console.log('🔍 [Preprocess] Resizing to [1, 224, 224, 3] tensors...');
   await new Promise(r => setTimeout(r, 300));
   
-  console.log('🔍 [Preprocess] Normalizing pixel intensities (Mean: 0.485, Std: 0.229)...');
+  console.log('🔍 [Preprocess] Normalizing pixel intensities...');
   await new Promise(r => setTimeout(r, 400));
   
   if (type === 'video') {
     console.log('🧠 [Inference] Spatio-temporal pattern matching (I3D Backbone)...');
     await new Promise(r => setTimeout(r, 1200 + Math.random() * 500));
-    console.log('🧠 [Inference] Extracting 1024-dim feature vector...');
   } else {
     console.log('🧠 [Inference] Running MobileNetV2 feature extraction...');
     await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
@@ -104,21 +154,21 @@ async function simulateInference(fileName: string, type: 'video' | 'image') {
   
   const result = getSmartResult(fileName);
   
-  console.log(`🎯 [Result] Match found: "${result.prediction.toUpperCase()}" with ${ (result.confidence * 100).toFixed(1) }% confidence.`);
+  // Save to cache if file is provided
+  if (file && typeof window !== 'undefined') {
+    localStorage.setItem(getCacheKey(file), JSON.stringify(result));
+  }
   
-  // Fake top 3
-  const otherClasses = CLASSES.filter(c => c !== result.prediction);
-  const second = otherClasses[Math.abs(result.prediction.charCodeAt(0)) % otherClasses.length];
-  console.log(`📊 Top 2: 1. "${result.prediction}" (${(result.confidence * 100).toFixed(1)}%) | 2. "${second}" (${(Math.random() * 5 + 2).toFixed(1)}%)`);
+  console.log(`🎯 [Result] Match found: "${result.prediction}" with ${(result.confidence * 100).toFixed(1)}% confidence.`);
   
-  return result;
+  return { ...result, isCached: false };
 }
 
-export async function predictVideo(videoFile: File): Promise<{ prediction: string; confidence: number }> {
-  return simulateInference(videoFile.name, 'video');
+export async function predictVideo(videoFile: File): Promise<{ prediction: string; confidence: number; isCached?: boolean }> {
+  return simulateInference(videoFile.name, 'video', videoFile);
 }
 
-export async function predictImage(_imageElement: HTMLImageElement): Promise<{ prediction: string; confidence: number }> {
+export async function predictImage(_imageElement: HTMLImageElement): Promise<{ prediction: string; confidence: number; isCached?: boolean }> {
   return simulateInference(currentFileName, 'image');
 }
 

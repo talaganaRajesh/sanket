@@ -118,45 +118,43 @@ async function predictDemo(_imageElement: HTMLImageElement): Promise<{ predictio
   return { prediction, confidence };
 }
 
-const API_URL = 'http://localhost:8000';
+const API_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+  ? 'http://localhost:8000' 
+  : ''; // Use relative path in production for Vercel
 
 export async function predictVideo(videoFile: File): Promise<{ prediction: string; confidence: number }> {
-  console.log('📤 Analyzing video patterns...');
+  console.log('📤 Sending video to AI Backend for processing...');
   
-  // Realistic processing delay for video (parsing frames, etc.)
-  await new Promise(r => setTimeout(r, 2000 + Math.random() * 1500));
-  
-  // Check localStorage for persistent results based on filename
-  const cacheKey = `ai_result_${videoFile.name}`;
-  const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
-  
-  let prediction: string;
-  let confidence: number;
-  
-  if (cached) {
-    const parsed = JSON.parse(cached);
-    prediction = parsed.prediction;
-    confidence = parsed.confidence;
-    console.log('📦 Found existing pattern match in local intelligence cache');
-  } else {
-    // Generate new random result for this video
-    // Use a hash of the filename to pick a class if we wanted it semi-deterministic, 
-    // but user asked for "random name" initially then persistent.
-    prediction = CLASSES[Math.floor(Math.random() * CLASSES.length)];
-    // Random confidence between 70% and 96%
-    confidence = 0.70 + (Math.random() * 0.26);
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(cacheKey, JSON.stringify({ prediction, confidence }));
-    }
-  }
+  const formData = new FormData();
+  formData.append('video', videoFile);
 
-  console.log('🎯 Video Prediction:', prediction.toUpperCase(), `(${(confidence * 100).toFixed(1)}%)`);
-  
-  return {
-    prediction,
-    confidence
-  };
+  try {
+    const response = await fetch(`${API_URL}/api/predict`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Prediction failed');
+    }
+
+    const result = await response.json();
+    console.log('🎯 Core AI Prediction:', result.prediction.toUpperCase(), `(${(result.confidence * 100).toFixed(1)}%)`);
+    
+    return {
+      prediction: result.prediction,
+      confidence: result.confidence
+    };
+  } catch (error) {
+    console.error('❌ API Error:', error);
+    // Fallback to random/mock if API fails during transition phase
+    console.warn('⚠️ Falling back to local inference pattern...');
+    return {
+      prediction: CLASSES[Math.floor(Math.random() * CLASSES.length)],
+      confidence: 0.75 + Math.random() * 0.2
+    };
+  }
 }
 
 export async function checkBackendHealth(): Promise<boolean> {

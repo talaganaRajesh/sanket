@@ -5,6 +5,10 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import VideoUpload from '@/components/VideoUpload';
 import ResultDisplay from '@/components/ResultDisplay';
+import ProcessProtocol from '@/components/ProcessProtocol';
+import ImpactMetrics from '@/components/ImpactMetrics';
+import PartnerMarquee from '@/components/PartnerMarquee';
+import MegaFooter from '@/components/MegaFooter';
 import { predictVideo, loadModel, onModelLoadProgress } from '@/utils/modelUtils';
 
 export default function Home() {
@@ -163,10 +167,15 @@ export default function Home() {
           </div>
         </section>
       )}
-
+      
       {/* Main Feature Entry: Only show when model is ready and NOT processing/showing results */}
       {modelReady && !isProcessing && !predictionData && (
-        <VideoUpload onVideoUploaded={handleVideoUpload} />
+        <>
+          <VideoUpload onVideoUploaded={handleVideoUpload} />
+          <ProcessProtocol />
+          <ImpactMetrics />
+          <PartnerMarquee />
+        </>
       )}
       
       {/* Processing Indicator */}
@@ -258,61 +267,17 @@ export default function Home() {
 
       {/* Result Display Section */}
       {predictionData && !isProcessing && (
-        <ResultDisplay
-          prediction={predictionData.prediction}
-          confidence={predictionData.confidence}
-          imageUrl={predictionData.videoUrl}
-        />
+        <>
+          <ResultDisplay
+            prediction={predictionData.prediction}
+            confidence={predictionData.confidence}
+            imageUrl={predictionData.videoUrl}
+          />
+          <ProcessProtocol />
+        </>
       )}
 
-      {/* Footer */}
-      <footer className="relative py-24 overflow-hidden bg-white border-t border-black/5">
-        <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-lg">
-                  <div className="w-5 h-5 bg-white rounded-sm rotate-45"></div>
-                </div>
-                <span className="text-3xl font-outfit font-black text-black italic tracking-tighter uppercase">Sanket</span>
-              </div>
-              <p className="text-zinc-500 text-sm leading-relaxed max-w-sm font-medium">
-                Pioneering high-fidelity spatiotemporal sign recognition via advanced neural architectures.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="text-[10px] font-black text-black uppercase tracking-[0.4em] mb-10 italic">Core</h3>
-              <ul className="space-y-4 text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                <li className="hover:text-black transition-colors cursor-pointer">Neural Link</li>
-                <li className="hover:text-black transition-colors cursor-pointer">Optical Feed</li>
-                <li className="hover:text-black transition-colors cursor-pointer">Vector API</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-[10px] font-black text-black uppercase tracking-[0.4em] mb-10 italic">Docs</h3>
-              <ul className="space-y-4 text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                <li className="hover:text-black transition-colors cursor-pointer">Whitepaper</li>
-                <li className="hover:text-black transition-colors cursor-pointer">Security</li>
-                <li className="hover:text-black transition-colors cursor-pointer">Support</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-black/5 mt-20 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-             <div className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.3em] italic">
-                © SANKET-SYSTEMS 2026 / ALL SEQUENCES RESERVED
-             </div>
-             <div className="flex gap-1.5">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="w-1.5 h-1.5 bg-black/5 rounded-full"></div>
-                ))}
-             </div>
-          </div>
-        </div>
-      </footer>
+      <MegaFooter />
     </main>
   );
 }

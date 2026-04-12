@@ -185,10 +185,10 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
       <div className="max-w-6xl mx-auto px-6 lg:px-12 relative z-10">
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-black/5 border border-black/5 mb-8">
-            <span className="text-[10px] uppercase tracking-[0.4em] font-black text-black italic">Sequence Ingestion</span>
+            <span className="text-[10px] uppercase tracking-[0.4em] font-black text-black italic">Upload Video</span>
           </div>
           <h2 className="text-5xl lg:text-7xl font-outfit font-black text-black mb-8 uppercase tracking-tighter italic">
-            Initialize <span className="text-zinc-300">Uplink</span>
+            Get <span className="text-zinc-300">Started</span>
           </h2>
           <p className="text-xl text-zinc-500 max-w-3xl mx-auto font-medium italic">
             Provide the temporal gesture data via local file ingestion or high-fidelity optical capture.
@@ -209,7 +209,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              File Stream
+              Upload File
             </button>
             <button
               onClick={() => handleTabChange('record')}
@@ -222,7 +222,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              Optical Link
+              Use Camera
             </button>
           </div>
         </div>
@@ -253,8 +253,8 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                     <div className="animate-spin rounded-full h-10 w-10 border-2 border-black border-t-transparent"></div>
                   </div>
                   <div>
-                    <h4 className="text-3xl font-outfit font-black text-black italic uppercase tracking-tighter">Uploading Bitstream...</h4>
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.5em] mt-6">Parsing spatiotemporal data</p>
+                    <h4 className="text-3xl font-outfit font-black text-black italic uppercase tracking-tighter">Uploading...</h4>
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.5em] mt-6">Processing video</p>
                   </div>
                 </div>
               ) : uploadedVideo ? (
@@ -265,13 +265,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-4xl font-outfit font-black text-black italic uppercase tracking-tighter">Buffer Loaded</h4>
+                    <h4 className="text-4xl font-outfit font-black text-black italic uppercase tracking-tighter">Ready</h4>
                     <p className="text-zinc-500 font-bold mt-4 text-base">{uploadedVideo.name}</p>
                     <button 
                       onClick={(e) => { e.stopPropagation(); resetRecording(); }}
                       className="mt-10 px-8 py-3 rounded-full border border-black/10 text-zinc-400 hover:text-black hover:bg-black/5 font-black uppercase text-[10px] tracking-[0.3em] transition-all"
                     >
-                      Clear Memory
+                      Remove
                     </button>
                   </div>
                 </div>
@@ -284,7 +284,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                   </div>
                   <div>
                     <h4 className="text-4xl md:text-6xl font-outfit font-black text-black tracking-tighter italic uppercase">
-                      Drop <span className="text-zinc-200">Uplink</span>
+                      Drop <span className="text-zinc-200">Video</span>
                     </h4>
                     <p className="text-zinc-500 font-medium mt-6 max-w-md mx-auto text-lg leading-relaxed italic">
                       Drag spatiotemporal data packets (MP4, MOV) or click to browse local storage.
@@ -297,8 +297,8 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
             // Recording Zone (Light HUD)
             <div className="glass rounded-[4rem] p-10 lg:p-20 border border-black/5 overflow-hidden relative shadow-3xl">
               <div className="text-center mb-16 italic">
-                <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.5em] mb-4 block">Hardware Layer: Activated</span>
-                <h3 className="text-4xl lg:text-5xl font-outfit font-black text-black uppercase tracking-tighter">Optical <span className="text-zinc-300">Analysis</span></h3>
+                <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.5em] mb-4 block">Camera Active</span>
+                <h3 className="text-4xl lg:text-5xl font-outfit font-black text-black uppercase tracking-tighter">Camera <span className="text-zinc-300">Feed</span></h3>
               </div>
 
               <div className="aspect-video bg-zinc-100 rounded-[3rem] overflow-hidden mb-16 relative group border border-black/5 shadow-inner">
@@ -329,7 +329,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="text-zinc-300 font-black uppercase text-[10px] tracking-[0.5em]">Awaiting Hardware Link</p>
+                      <p className="text-zinc-300 font-black uppercase text-[10px] tracking-[0.5em]">Waiting for camera...</p>
                     </div>
                   </div>
                 )}
@@ -342,7 +342,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                     onClick={startCamera}
                     className="px-16 py-6 bg-black text-white rounded-full font-black uppercase text-[11px] tracking-[0.3em] transition-all hover:scale-105 active:scale-95 shadow-2xl flex items-center gap-4"
                   >
-                    Open Optical Feed
+                    Open Camera
                   </button>
                 ) : (
                   <div className="flex bg-white p-2 rounded-full gap-2 border border-black/5 shadow-xl">
@@ -359,7 +359,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                           onClick={stopCamera}
                           className="px-10 py-4 text-zinc-400 hover:text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all"
                         >
-                          Terminate Feed
+                          Close Camera
                         </button>
                       </>
                     ) : (
@@ -368,7 +368,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
                         className="px-16 py-6 bg-black text-white rounded-full font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center gap-5 shadow-2xl scale-110"
                       >
                         <div className="w-3 h-3 bg-white rounded-sm animate-spin"></div>
-                        Finalize Sequence
+                        Stop Recording
                       </button>
                     )}
                   </div>
@@ -383,9 +383,8 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
               <div className="flex items-center justify-between mb-8 italic">
                 <h3 className="text-xs font-black text-black uppercase tracking-[0.5em] flex items-center gap-3">
                   <span className="w-2 h-2 bg-black rounded-full"></span>
-                  Buffered Sequence
+                  Preview
                 </h3>
-                <span className="text-[10px] font-bold text-zinc-300">CRC-32: PASS</span>
               </div>
               <div className="aspect-video bg-zinc-50 rounded-[2rem] overflow-hidden ring-1 ring-black/5 shadow-inner">
                 <video src={videoPreviewUrl} controls className="w-full h-full object-contain" />

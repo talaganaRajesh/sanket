@@ -23,12 +23,11 @@ export default function Home() {
     if (!isProcessing) return;
     
     const messages = [
-      'Detecting hands...',
-      'Analyzing spatio-temporal patterns...',
-      'Matching sign language gestures...',
-      'Extracting feature vectors...',
-      'Calculating probability distribution...',
-      'Finalizing recognition result...'
+      'Scanning video...',
+      'Analyzing patterns...',
+      'Recognizing signs...',
+      'Processing data...',
+      'Finalizing result...'
     ];
     
     let i = 0;
@@ -87,12 +86,11 @@ export default function Home() {
 
       // Define simulation workflow
       const simulationWorkflow = [
-        { msg: 'Initializing hardware hooks...', min: 300, max: 700 },
-        { msg: 'Allocating GPU compute buffers...', min: 400, max: 800 },
-        { msg: 'Detecting hand landmarks...', min: 1200, max: 4000 },
-        { msg: 'Temporal pooling active...', min: 800, max: 2000 },
-        { msg: 'Running I3D extraction...', min: 1500, max: 3500 },
-        { msg: 'Finalizing result...', min: 400, max: 900 }
+        { msg: 'Starting analysis...', min: 300, max: 700 },
+        { msg: 'Scanning frames...', min: 400, max: 800 },
+        { msg: 'Analyzing gestures...', min: 1200, max: 3000 },
+        { msg: 'Processing patterns...', min: 800, max: 1500 },
+        { msg: 'Almost there...', min: 400, max: 900 }
       ];
 
       for (const step of simulationWorkflow) {
@@ -136,13 +134,13 @@ export default function Home() {
                 </div>
                 
                 <h3 className="text-4xl md:text-5xl font-outfit font-black text-black mb-6 uppercase italic tracking-tighter">
-                  {modelStatus.stage === 'parse' ? 'Compiling <span className="text-zinc-400">Neural</span>' : 'Fetching <span className="text-zinc-400">Weights</span>'}
+                  {modelStatus.stage === 'parse' ? 'Finalizing <span className="text-zinc-400">Setup</span>' : 'Loading <span className="text-zinc-400">AI</span>'}
                 </h3>
                 
                 <p className="text-zinc-500 text-lg mb-12 max-w-md mx-auto font-medium lowercase italic leading-relaxed">
                   {modelStatus.stage === 'parse' 
-                    ? 'Optimizing spatiotemporal kernels for high-fidelity inference.'
-                    : 'Awaiting neural parameter injection...'}
+                    ? 'Preparing the engine for high-precision recognition.'
+                    : 'System is warming up...'}
                 </p>
                 
                 <div className="max-w-sm mx-auto">
@@ -204,7 +202,7 @@ export default function Home() {
                 
                 <div className="flex items-center justify-center gap-6 mb-12">
                   <span className="w-16 h-px bg-black/10"></span>
-                  <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.5em] italic">Extraction Active</p>
+                  <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.5em] italic">Analysis Active</p>
                   <span className="w-16 h-px bg-black/10"></span>
                 </div>
                 
@@ -215,11 +213,11 @@ export default function Home() {
                   <div className="flex justify-between mt-10">
                     <div className="text-left">
                       <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] italic">Algorithm Engine</p>
-                      <p className="text-sm font-outfit font-bold text-black mt-2 uppercase">Sanket-I3D</p>
+                      <p className="text-sm font-outfit font-bold text-black mt-2 uppercase">Sanket Engine</p>
                     </div>
                     <div className="text-right">
                       <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] italic">Buffer State</p>
-                      <p className="text-sm font-outfit font-bold text-black mt-2 uppercase">Sync Complete</p>
+                      <p className="text-sm font-outfit font-bold text-black mt-2 uppercase">Ready</p>
                     </div>
                   </div>
                 </div>

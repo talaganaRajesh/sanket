@@ -18,25 +18,12 @@ const Navbar = () => {
             </span>
           </div>
 
-          {/* Navigation Links (Hidden on Mobile) */}
-          <div className="hidden md:flex items-center gap-12">
-            {['Architecture', 'Research', 'Security'].map((link) => (
-              <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
-                className="text-[10px] font-black text-zinc-400 hover:text-black uppercase tracking-[0.3em] transition-all relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-px after:bg-black hover:after:w-full after:transition-all"
-              >
-                {link}
-              </a>
-            ))}
-          </div>
-
           {/* CTA Button */}
           <button 
             onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.2)]"
           >
-            Access Core
+            Launch
           </button>
         </div>
       </div>

@@ -88,21 +88,8 @@ export default function Home() {
       // Create video URL for preview
       const videoUrl = URL.createObjectURL(videoFile);
 
-      // Define simulation workflow
-      const simulationWorkflow = [
-        { msg: 'Starting analysis...', min: 300, max: 700 },
-        { msg: 'Scanning frames...', min: 400, max: 800 },
-        { msg: 'Analyzing gestures...', min: 1200, max: 3000 },
-        { msg: 'Processing patterns...', min: 800, max: 1500 },
-        { msg: 'Almost there...', min: 400, max: 900 }
-      ];
-
-      for (const step of simulationWorkflow) {
-        setProcessingMessage(step.msg);
-        const delay = Math.floor(Math.random() * (step.max - step.min + 1) + step.min);
-        await new Promise(r => setTimeout(r, delay));
-      }
-
+      // Real processing workflow with genuine AI inference
+      setProcessingMessage('Uploading video...');
       const result = await predictVideo(videoFile);
 
       setPredictionData({

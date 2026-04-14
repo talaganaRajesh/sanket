@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: sanket-backend
+    env: python
+    region: ohio
+    plan: free
+    rootDir: video-model
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
